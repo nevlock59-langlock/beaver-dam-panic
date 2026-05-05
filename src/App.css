@@ -18,6 +18,21 @@
   --btn-shadow-active: 0 2px 0 var(--accent-orange-dark);
 }
 
+.emoji-container {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  vertical-align: middle;
+}
+
+img.emoji {
+  height: 1em;
+  width: 1em;
+  margin: 0 .05em 0 .1em;
+  vertical-align: -0.1em;
+}
+
 * {
   box-sizing: border-box;
   margin: 0;

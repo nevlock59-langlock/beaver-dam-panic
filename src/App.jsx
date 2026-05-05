@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
+import twemoji from 'twemoji';
 import beaverImg from './assets/beaver.png';
 import './App.css';
 
@@ -19,10 +20,19 @@ const MATERIALS = [
 
 const Emoji = ({ symbol, className = "" }) => {
   if (!symbol) return null;
+  
+  // Parse the emoji symbol using twemoji to get SVG images
+  const html = twemoji.parse(symbol, {
+    folder: 'svg',
+    ext: '.svg',
+    base: 'https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/'
+  });
+
   return (
-    <span className={`emoji-container ${className}`} role="img" aria-label="emoji">
-      {symbol}
-    </span>
+    <span 
+      className={`emoji-container ${className}`} 
+      dangerouslySetInnerHTML={{ __html: html }}
+    />
   );
 };
 
@@ -346,7 +356,7 @@ function App() {
                 <span className="step-icon"><Emoji symbol="🪵" /></span>
                 <span className="step-text">재료 선택</span>
               </div>
-              <div className="step-arrow">➜</div>
+              <div className="step-arrow"><Emoji symbol="➜" /></div>
               <div className="step">
                 <span className="step-num">2</span>
                 <span className="step-icon"><Emoji symbol="🕳️" /></span>
@@ -416,7 +426,7 @@ function App() {
 
           <div className={`game-board ${pressure > 70 ? 'danger' : ''}`}>
             {showSpeedUpToast && (
-              <div className="speed-up-toast">SPEED UP! ⚡</div>
+              <div className="speed-up-toast">SPEED UP! <Emoji symbol="⚡" /></div>
             )}
             {isPaused && (
               <div className="pause-overlay">
