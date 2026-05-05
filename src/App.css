@@ -805,9 +805,17 @@ body {
   to { transform: translateY(-5px); }
 }
 
-/* Extra Game Effects */
+  /* Extra Game Effects */
 .app-container.tension {
   animation: tensionVibrate 0.1s infinite;
+}
+
+.emoji-img {
+  width: 1em;
+  height: 1em;
+  margin: 0 0.05em 0 0.1em;
+  vertical-align: -0.1em;
+  display: inline-block;
 }
 
 @keyframes tensionVibrate {

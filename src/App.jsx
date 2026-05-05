@@ -1,19 +1,38 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
+import twemoji from 'twemoji';
 import './App.css';
 
 const GAME_DURATION = 30;
 const MAX_PRESSURE = 100;
+
 const HOLE_TYPES = [
-  { id: 'small', label: '💧 Small', repair: 'leaf', score: 10, pressureInc: 5 },
-  { id: 'medium', label: '🌊 Medium', repair: 'wood', score: 20, pressureInc: 8 },
-  { id: 'large', label: '🌋 Large', repair: 'stone', score: 50, pressureInc: 15 },
+  { id: 'small', emoji: '💧', label: 'Small', repair: 'leaf', score: 10, pressureInc: 5 },
+  { id: 'medium', emoji: '🌊', label: 'Medium', repair: 'wood', score: 20, pressureInc: 8 },
+  { id: 'large', emoji: '🌋', label: 'Large', repair: 'stone', score: 50, pressureInc: 15 },
 ];
 
 const MATERIALS = [
-  { id: 'leaf', label: '🍃 Leaf' },
-  { id: 'wood', label: '🪵 Wood' },
-  { id: 'stone', label: '🪨 Stone' },
+  { id: 'leaf', emoji: '🍃', label: 'Leaf' },
+  { id: 'wood', emoji: '🪵', label: 'Wood' },
+  { id: 'stone', emoji: '🪨', label: 'Stone' },
 ];
+
+const Emoji = ({ symbol, className = "" }) => {
+  if (!symbol) return null;
+  return (
+    <span 
+      className={`emoji-container ${className}`}
+      dangerouslySetInnerHTML={{ 
+        __html: twemoji.parse(symbol, {
+          folder: 'svg',
+          ext: '.svg',
+          base: 'https://cdn.jsdelivr.net/gh/twitter/twemoji@latest/assets/',
+          className: 'emoji-img'
+        }) 
+      }} 
+    />
+  );
+};
 
 function App() {
   const [gameState, setGameState] = useState('START'); // START, PLAYING, GAMEOVER
@@ -33,7 +52,6 @@ function App() {
   const [countdown, setCountdown] = useState(null);
   const [beaverAction, setBeaverAction] = useState('idle'); // idle, joy, panic
   const [soundEnabled, setSoundEnabled] = useState(true);
-  const [speedUpShown, setSpeedUpShown] = useState(false);
   const [showSpeedUpToast, setShowSpeedUpToast] = useState(false);
 
   const gameLoopRef = useRef(null);
@@ -94,7 +112,6 @@ function App() {
     setBeaverAction('idle');
     setGameState('COUNTDOWN');
     setCountdown(3);
-    setSpeedUpShown(false);
     setShowSpeedUpToast(false);
   };
 
@@ -151,13 +168,10 @@ function App() {
   useEffect(() => {
     if (gameState === 'PLAYING' && !isPaused) {
       gameLoopRef.current = setInterval(() => {
-        const elapsed = GAME_DURATION - timeLeftRef.current;
-        
         // Time update
         setTimeLeft((prev) => {
           const next = prev - 1;
           if (next === 20) {
-            setSpeedUpShown(true);
             setShowSpeedUpToast(true);
             setTimeout(() => setShowSpeedUpToast(false), 1000);
           }
@@ -176,9 +190,6 @@ function App() {
 
           // [불변조건 1] 구멍이 없으면 압력은 절대 증가하지 않는다.
           if (!currentHoles || currentHoles.length === 0) {
-            if (elapsed >= 10 && elapsed <= 20) {
-              console.log(`[DEBUG] 10-20s 구간 - 구멍 없음 (압력 유지): ${prev.toFixed(1)}`);
-            }
             return prev;
           }
 
@@ -197,10 +208,6 @@ function App() {
 
           const next = prev + increment;
           
-          if (elapsed >= 10 && elapsed <= 20) {
-            console.log(`[DEBUG] 10-20s 구간 - 경과:${elapsed}s, 구멍:${currentHoles.length}, 압력:${prev.toFixed(1)} -> ${next.toFixed(1)}`);
-          }
-
           if (next >= MAX_PRESSURE) {
             clearInterval(gameLoopRef.current);
             endGame();
@@ -212,7 +219,7 @@ function App() {
 
       return () => clearInterval(gameLoopRef.current);
     }
-  }, [gameState, isPaused, endGame]); // Minimal dependencies to prevent interval resets
+  }, [gameState, isPaused, endGame]);
 
   // Hole Spawning Logic
   useEffect(() => {
@@ -236,7 +243,6 @@ function App() {
 
       startSpawning();
       
-      // 10초, 20초 시점에 간격을 강제로 재설정하기 위한 보조 타이머
       const checkInterval = setInterval(() => {
         const elapsed = GAME_DURATION - timeLeftRef.current;
         if (elapsed === 10 || elapsed === 20) {
@@ -256,7 +262,6 @@ function App() {
     if (gameState === 'PLAYING' && !isPaused && holes.length === 0) {
       const timer = setTimeout(() => {
         if (holesRef.current.length === 0) {
-          console.log("[DEBUG] 구멍 공백 감지 - 강제 스폰 실행");
           spawnHole();
         }
       }, 500);
@@ -284,10 +289,10 @@ function App() {
       setCombo(newCombo);
       
       setHoles((prev) => prev.filter((h) => h.id !== hole.id));
-      setPressure((prev) => Math.max(0, prev - 5)); // 성공 시 압력 감소량 상향 (MVP)
+      setPressure((prev) => Math.max(0, prev - 5));
       setScreenEffect('success');
       
-      const materialIcon = MATERIALS.find(m => m.id === selectedMaterial).label.split(' ')[0];
+      const materialIcon = MATERIALS.find(m => m.id === selectedMaterial).emoji;
       addFeedback(hole.x, hole.y, `+${points}`, 'success', materialIcon);
       
       setBeaverAction('joy');
@@ -324,33 +329,33 @@ function App() {
         <div className="start-screen">
           <div className="start-header">
             <button className="start-btn-icon" onClick={() => setSoundEnabled(!soundEnabled)}>
-              {soundEnabled ? '🔊' : '🔇'}
+              <Emoji symbol={soundEnabled ? '🔊' : '🔇'} />
             </button>
-            <button className="start-btn-icon">🏆</button>
+            <button className="start-btn-icon"><Emoji symbol="🏆" /></button>
           </div>
           <div className="bg-clouds">
-            <div className="cloud cloud-1">☁️</div>
-            <div className="cloud cloud-2">☁️</div>
-            <div className="cloud cloud-3">☁️</div>
+            <div className="cloud cloud-1"><Emoji symbol="☁️" /></div>
+            <div className="cloud cloud-2"><Emoji symbol="☁️" /></div>
+            <div className="cloud cloud-3"><Emoji symbol="☁️" /></div>
           </div>
           <div className="start-card">
             <div className="start-beaver">
-              <div className="beaver-panic-decor decor-1">💦</div>
+              <div className="beaver-panic-decor decor-1"><Emoji symbol="💦" /></div>
               <div className="beaver-panic-decor decor-2">!!</div>
-              <div className="beaver-logo">🦫</div>
+              <div className="beaver-logo"><Emoji symbol="🦫" /></div>
               <div className="dam-plank"></div>
             </div>
             <h1 className="start-title">Beaver Dam Panic</h1>
             <div className="start-rules">
               <div className="step">
                 <span className="step-num">1</span>
-                <span className="step-icon">🪵</span>
+                <span className="step-icon"><Emoji symbol="🪵" /></span>
                 <span className="step-text">재료 선택</span>
               </div>
               <div className="step-arrow">➜</div>
               <div className="step">
                 <span className="step-num">2</span>
-                <span className="step-icon">🕳️</span>
+                <span className="step-icon"><Emoji symbol="🕳️" /></span>
                 <span className="step-text">구멍 수리!</span>
               </div>
             </div>
@@ -361,15 +366,15 @@ function App() {
             <div className="start-legend">
               <div className="start-pill">
                 <div className="mini-hole small"></div>
-                <span className="legend-text">🍃</span>
+                <span className="legend-text"><Emoji symbol="🍃" /></span>
               </div>
               <div className="start-pill">
                 <div className="mini-hole medium"></div>
-                <span className="legend-text">🪵</span>
+                <span className="legend-text"><Emoji symbol="🪵" /></span>
               </div>
               <div className="start-pill">
                 <div className="mini-hole large"></div>
-                <span className="legend-text">🪨</span>
+                <span className="legend-text"><Emoji symbol="🪨" /></span>
               </div>
             </div>
             <button className="start-button" onClick={startGame}>수리 시작!</button>
@@ -406,12 +411,12 @@ function App() {
                 <div className={`equipped-box ${selectedMaterial ? 'has-item' : ''}`}>
                   {selectedMaterial ? (
                     <span className="equipped-icon">
-                      {MATERIALS.find(m => m.id === selectedMaterial).label.split(' ')[0]}
+                      <Emoji symbol={MATERIALS.find(m => m.id === selectedMaterial).emoji} />
                     </span>
-                  ) : '🛠️'}
+                  ) : <Emoji symbol="🛠️" />}
                 </div>
               </div>
-              <button className="btn-pause-small" onClick={() => setIsPaused(true)}>⏸️</button>
+              <button className="btn-pause-small" onClick={() => setIsPaused(true)}><Emoji symbol="⏸️" /></button>
             </div>
           </div>
 
@@ -429,7 +434,7 @@ function App() {
               </div>
             )}
             <div className={`beaver-game-avatar action-${beaverAction} ${pressure > 70 && beaverAction === 'idle' ? 'panic' : ''}`}>
-              🦫
+              <Emoji symbol="🦫" />
             </div>
             <div 
               className="water-overlay" 
@@ -444,7 +449,7 @@ function App() {
                 onClick={() => handleHoleClick(hole)}
               >
                 <div className="hole-inner">
-                  {HOLE_TYPES.find(t => t.id === hole.type).label.split(' ')[0]}
+                  <Emoji symbol={HOLE_TYPES.find(t => t.id === hole.type).emoji} />
                 </div>
               </button>
             ))}
@@ -454,7 +459,7 @@ function App() {
                 className={`feedback-text feedback-${fb.type}`}
                 style={{ left: `${fb.x}%`, top: `${fb.y}%` }}
               >
-                {fb.icon && <span className="feedback-icon">{fb.icon}</span>}
+                {fb.icon && <span className="feedback-icon"><Emoji symbol={fb.icon} /></span>}
                 <span className="feedback-val">{fb.value}</span>
               </div>
             ))}
@@ -467,8 +472,8 @@ function App() {
                 className={`dock-item ${selectedMaterial === mat.id ? 'selected' : ''}`}
                 onClick={() => handleMaterialSelect(mat.id)}
               >
-                <span className="dock-icon">{mat.label.split(' ')[0]}</span>
-                <span className="dock-label">{mat.label.split(' ')[1]}</span>
+                <span className="dock-icon"><Emoji symbol={mat.emoji} /></span>
+                <span className="dock-label">{mat.label}</span>
               </button>
             ))}
           </div>
@@ -478,8 +483,8 @@ function App() {
       {gameState === 'GAMEOVER' && (
         <div className={`screen result-screen ${pressure >= MAX_PRESSURE ? 'burst' : 'safe'}`}>
           <div className="bg-clouds">
-            <div className="cloud cloud-1">☁️</div>
-            <div className="cloud cloud-2">☁️</div>
+            <div className="cloud cloud-1"><Emoji symbol="☁️" /></div>
+            <div className="cloud cloud-2"><Emoji symbol="☁️" /></div>
           </div>
           <div className="result-card">
             {isNewRecord && <div className="new-record-badge">NEW RECORD!</div>}
@@ -494,7 +499,9 @@ function App() {
                   key={s} 
                   className={`star ${s <= stars ? 'active' : ''}`}
                   style={{ animationDelay: `${0.2 + s * 0.1}s` }}
-                >⭐</span>
+                >
+                  <Emoji symbol="⭐" />
+                </span>
               ))}
             </div>
 
