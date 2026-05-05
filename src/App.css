@@ -124,9 +124,16 @@ body {
 }
 
 .start-beaver .beaver-logo {
-  font-size: 7rem;
+  width: 140px;
+  height: 140px;
   filter: drop-shadow(0 10px 0 rgba(0,0,0,0.05));
   animation: beaverFloat 2s infinite alternate ease-in-out;
+}
+
+.beaver-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
 }
 
 .start-title {
@@ -583,7 +590,8 @@ body {
   position: absolute;
   bottom: 12px;
   right: 12px;
-  font-size: 3rem;
+  width: 60px;
+  height: 60px;
   z-index: 20;
   filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3));
   pointer-events: none;
@@ -808,14 +816,6 @@ body {
   /* Extra Game Effects */
 .app-container.tension {
   animation: tensionVibrate 0.1s infinite;
-}
-
-.emoji-img {
-  width: 1em;
-  height: 1em;
-  margin: 0 0.05em 0 0.1em;
-  vertical-align: -0.1em;
-  display: inline-block;
 }
 
 @keyframes tensionVibrate {

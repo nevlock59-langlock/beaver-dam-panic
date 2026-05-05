@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
-import twemoji from 'twemoji';
+import beaverImg from './assets/beaver.png';
 import './App.css';
 
 const GAME_DURATION = 30;
@@ -20,17 +20,9 @@ const MATERIALS = [
 const Emoji = ({ symbol, className = "" }) => {
   if (!symbol) return null;
   return (
-    <span 
-      className={`emoji-container ${className}`}
-      dangerouslySetInnerHTML={{ 
-        __html: twemoji.parse(symbol, {
-          folder: 'svg',
-          ext: '.svg',
-          base: 'https://cdn.jsdelivr.net/gh/twitter/twemoji@latest/assets/',
-          className: 'emoji-img'
-        }) 
-      }} 
-    />
+    <span className={`emoji-container ${className}`} role="img" aria-label="emoji">
+      {symbol}
+    </span>
   );
 };
 
@@ -342,7 +334,9 @@ function App() {
             <div className="start-beaver">
               <div className="beaver-panic-decor decor-1"><Emoji symbol="💦" /></div>
               <div className="beaver-panic-decor decor-2">!!</div>
-              <div className="beaver-logo"><Emoji symbol="🦫" /></div>
+              <div className="beaver-logo">
+                <img src={beaverImg} alt="beaver" className="beaver-img" />
+              </div>
               <div className="dam-plank"></div>
             </div>
             <h1 className="start-title">Beaver Dam Panic</h1>
@@ -434,7 +428,7 @@ function App() {
               </div>
             )}
             <div className={`beaver-game-avatar action-${beaverAction} ${pressure > 70 && beaverAction === 'idle' ? 'panic' : ''}`}>
-              <Emoji symbol="🦫" />
+              <img src={beaverImg} alt="beaver" className="beaver-img" />
             </div>
             <div 
               className="water-overlay" 
