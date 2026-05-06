@@ -136,11 +136,12 @@ function App() {
 
   const endGame = useCallback(() => {
     const newRecord = score > highScore;
+    const survivalTime = GAME_DURATION - timeLeftRef.current;
     
-    let earnedStars = 1;
-    if (score >= 600) earnedStars = 3;
-    else if (score >= 300) earnedStars = 2;
-    if (pressure >= MAX_PRESSURE) earnedStars = 0;
+    let earnedStars = 0;
+    if (pressure < MAX_PRESSURE || survivalTime >= 30) earnedStars = 3;
+    else if (survivalTime >= 20) earnedStars = 2;
+    else if (survivalTime >= 10) earnedStars = 1;
 
     setTimeout(() => {
       setGameState('GAMEOVER');
@@ -479,87 +480,94 @@ function App() {
                 <div className="pause-card">
                   <h2>잠시 휴식 중!</h2>
                   <p>비버가 숨을 고르고 있어요.</p>
-                  <button className="btn-primary" onClick={() => setIsPaused(false)}>계속하기</button>
-                </div>
-              </div>
-            )}
-            <div className={`beaver-game-avatar action-${beaverAction} ${pressure > 70 && beaverAction === 'idle' ? 'panic' : ''}`}>
-              <img src={beaverImg} alt="beaver" className="beaver-img" />
-            </div>
-            <div 
-              className="water-overlay" 
-              style={{ height: `${pressure}%` }}
-            >
-            </div>
-            {holes.map((hole) => (
-              <button
-                key={hole.id}
-                className={`hole hole-${hole.type}`}
-                style={{ left: `${hole.x}%`, top: `${hole.y}%` }}
-                onClick={() => handleHoleClick(hole)}
-              >
-                <div className="hole-inner">
+                  <button className="btn-resume" onClick={() => setIsPaused(false)}>계속하기</button>
+                  </div>
+                  </div>
+                  )}
+                  <div className={`beaver-game-avatar action-${beaverAction} ${pressure > 70 && beaverAction === 'idle' ? 'panic' : ''}`}>
+                  <img src={beaverImg} alt="beaver" className="beaver-img" />
+                  </div>
+                  <div
+                  className="water-overlay"
+                  style={{ height: `${pressure}%` }}
+                  >
+                  </div>
+                  {holes.map((hole) => (
+                  <button
+                  key={hole.id}
+                  className={`hole hole-${hole.type}`}
+                  style={{ left: `${hole.x}%`, top: `${hole.y}%` }}
+                  onClick={() => handleHoleClick(hole)}
+                  >
+                  <div className="hole-inner">
                   <Emoji symbol={HOLE_TYPES.find(t => t.id === hole.type).emoji} />
-                </div>
-              </button>
-            ))}
-            {feedbacks.map((fb) => (
-              <div
-                key={fb.id}
-                className={`feedback-text feedback-${fb.type}`}
-                style={{ left: `${fb.x}%`, top: `${fb.y}%` }}
-              >
-                {fb.icon && <span className="feedback-icon"><Emoji symbol={fb.icon} /></span>}
-                <span className="feedback-val">{fb.value}</span>
-              </div>
-            ))}
-          </div>
+                  </div>
+                  </button>
+                  ))}
+                  {feedbacks.map((fb) => (
+                  <div
+                  key={fb.id}
+                  className={`feedback-text feedback-${fb.type}`}
+                  style={{ left: `${fb.x}%`, top: `${fb.y}%` }}
+                  >
+                  {fb.icon && <span className="feedback-icon"><Emoji symbol={fb.icon} /></span>}
+                  <span className="feedback-val">{fb.value}</span>
+                  </div>
+                  ))}
+                  </div>
 
-          <div className="material-dock">
-            {MATERIALS.map((mat) => (
-              <button
-                key={mat.id}
-                className={`dock-item ${selectedMaterial === mat.id ? 'selected' : ''}`}
-                onClick={() => handleMaterialSelect(mat.id)}
-              >
-                <span className="dock-icon"><Emoji symbol={mat.emoji} /></span>
-                <span className="dock-label">{mat.label}</span>
-              </button>
-            ))}
-          </div>
-        </div>
-      )}
+                  <div className="material-dock">
+                  {MATERIALS.map((mat) => (
+                  <button
+                  key={mat.id}
+                  className={`dock-item ${selectedMaterial === mat.id ? 'selected' : ''}`}
+                  onClick={() => handleMaterialSelect(mat.id)}
+                  >
+                  <span className="dock-icon"><Emoji symbol={mat.emoji} /></span>
+                  <span className="dock-label">{mat.label}</span>
+                  </button>
+                  ))}
+                  </div>
+                  </div>
+                  )}
 
-      {gameState === 'GAMEOVER' && (
-        <div className={`screen result-screen ${pressure >= MAX_PRESSURE ? 'burst' : 'safe'}`}>
-          <div className="bg-clouds">
-            <div className="cloud cloud-1"><Emoji symbol="☁️" /></div>
-            <div className="cloud cloud-2"><Emoji symbol="☁️" /></div>
-          </div>
-          <div className="result-card">
-            {isNewRecord && <div className="new-record-badge">NEW RECORD!</div>}
-            
-            <h1 className="result-title">
-              {pressure >= MAX_PRESSURE ? 'Dam Burst!' : (score >= 600 ? 'Success' : 'Safe!')}
-            </h1>
+                  {gameState === 'GAMEOVER' && (
+                  <div className={`screen result-screen ${pressure >= MAX_PRESSURE ? 'burst' : 'safe'}`}>
+                  <div className="bg-clouds">
+                  <div className="cloud cloud-1"><Emoji symbol="☁️" /></div>
+                  <div className="cloud cloud-2"><Emoji symbol="☁️" /></div>
+                  </div>
+                  <div className="result-card">
+                  {isNewRecord && <div className="new-record-badge">NEW RECORD!</div>}
 
-            <div className="star-rating">
-              {[1, 2, 3].map((s) => (
-                <span 
-                  key={s} 
+                  <h1 className="result-title">
+                  {pressure >= MAX_PRESSURE ? 'Dam Burst!' : (score >= 600 ? 'Success' : 'Safe!')}
+                  </h1>
+
+                  <p className="result-feedback">
+                  {pressure >= MAX_PRESSURE
+                  ? "댐이 무너졌어요! 구멍 크기에 맞는 재료를 더 빠르게 골라보세요."
+                  : "30초 동안 댐을 지켜냈어요! 더 높은 점수에 도전해보세요."}
+                  </p>
+
+                  <div className="star-rating">
+                  {[1, 2, 3].map((s) => (
+                  <span
+                  key={s}
                   className={`star ${s <= stars ? 'active' : ''}`}
                   style={{ animationDelay: `${0.2 + s * 0.1}s` }}
-                >
+                  >
                   <Emoji symbol="⭐" />
-                </span>
-              ))}
-            </div>
+                  </span>
+                  ))}
+                  </div>
 
-            <div className="result-stats">
-              <p className="final-score-label">Final Score</p>
-              <p className="final-score">{displayedScore}</p>
-              <p className="high-score">Best Score: {highScore}</p>
-            </div>
+                  <div className="result-stats">
+                  <p className="final-score-label">Final Score</p>
+                  <p className="final-score">{displayedScore}</p>
+                  <p className="high-score">Best Score: {isNewRecord ? score : highScore}</p>
+                  </div>
+            <div className="star-criteria">Stars: 10s / 20s / 30s</div>
 
             <button className="result-restart-btn" onClick={startGame}>다시 하기</button>
           </div>
