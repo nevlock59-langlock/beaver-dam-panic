@@ -295,6 +295,20 @@ body {
   box-shadow: 0 2px 0 var(--panel-border);
 }
 
+.made-by-credit {
+  position: absolute;
+  bottom: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 11px;
+  opacity: 0.5;
+  color: var(--text-muted);
+  font-weight: 600;
+  pointer-events: none;
+  white-space: nowrap;
+  z-index: 100;
+}
+
 .beaver-panic-decor {
   position: absolute;
   font-size: 1.5rem;

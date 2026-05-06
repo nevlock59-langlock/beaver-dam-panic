@@ -383,6 +383,7 @@ function App() {
             </div>
             <button className="start-button" onClick={startGame}>수리 시작!</button>
           </div>
+          <div className="made-by-credit">made in 함수철의 데모공장</div>
         </div>
       )}
 
