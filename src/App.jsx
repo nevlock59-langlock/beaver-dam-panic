@@ -77,6 +77,9 @@ function App() {
   const [soundEnabled, setSoundEnabled] = useState(true);
   const [showSpeedUpToast, setShowSpeedUpToast] = useState(false);
   const [showTutorial, setShowTutorial] = useState(false);
+  const [showRecords, setShowRecords] = useState(false);
+  const [bestScore, setBestScore] = useState(() => Number(localStorage.getItem('beaver-best-score')) || 0);
+  const [bestScoreMode, setBestScoreMode] = useState(() => localStorage.getItem('beaver-best-score-mode') || '');
 
   const gameLoopRef = useRef(null);
   const holeSpawnRef = useRef(null);
@@ -189,7 +192,15 @@ function App() {
         return updated;
       });
     }
-  }, [score, highScores, pressure]);
+
+    // Update all-time best
+    if (score > bestScore) {
+      setBestScore(score);
+      setBestScoreMode(currentMode);
+      localStorage.setItem('beaver-best-score', score.toString());
+      localStorage.setItem('beaver-best-score-mode', currentMode);
+    }
+  }, [score, highScores, pressure, bestScore]);
 
   // Score count-up effect
   useEffect(() => {
@@ -394,7 +405,9 @@ function App() {
             <button className="start-btn-icon" onClick={() => setSoundEnabled(!soundEnabled)}>
               <Emoji symbol={soundEnabled ? '🔊' : '🔇'} />
             </button>
-            <button className="start-btn-icon"><Emoji symbol="🏆" /></button>
+            <button className="start-btn-icon" onClick={() => setShowRecords(true)}>
+              <Emoji symbol="🏆" />
+            </button>
           </div>
           <div className="bg-clouds">
             <div className="cloud cloud-1"><Emoji symbol="☁️" /></div>
@@ -492,12 +505,41 @@ function App() {
                     <div className="tutorial-icon"><Emoji symbol="🏁" /></div>
                     <div className="tutorial-text">
                       <strong>끝까지 버티면 성공!</strong>
-                      <p>{gameMode === 'EASY' ? '30초' : '60초'} 동안 댐을 무사히 지켜내면 승리합니다.</p>
+                      <p>Easy는 30초, Hard는 60초 동안 댐을 지키면 승리합니다.</p>
                     </div>
                   </div>
                 </div>
                 <button className="tutorial-start-btn" onClick={() => setShowTutorial(false)}>
                   알겠어요!
+                </button>
+              </div>
+            </div>
+          )}
+
+          {showRecords && (
+            <div className="tutorial-overlay" onClick={() => setShowRecords(false)}>
+              <div className="tutorial-card" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }} onClick={(e) => e.stopPropagation()}>
+                <button className="tutorial-close" onClick={() => setShowRecords(false)}>
+                  <Emoji symbol="❌" />
+                </button>
+                <h2 className="tutorial-title">🏆 Best Record</h2>
+                <div className="tutorial-content" style={{ textAlign: 'center', margin: '20px 0' }}>
+                  {bestScore > 0 ? (
+                    <>
+                      <div className="final-score" style={{ fontSize: '3.5rem', margin: '10px 0' }}>{bestScore}</div>
+                      <div className="result-mode-badge" style={{ position: 'static', marginBottom: '10px', display: 'inline-block' }}>
+                        {bestScoreMode} MODE
+                      </div>
+                    </>
+                  ) : (
+                    <div style={{ color: 'var(--text-muted)', fontWeight: 600, padding: '20px 0' }}>
+                      <p>아직 기록이 없어요!</p>
+                      <p>첫 댐 수리에 도전해보세요.</p>
+                    </div>
+                  )}
+                </div>
+                <button className="tutorial-start-btn" onClick={() => setShowRecords(false)}>
+                  닫기
                 </button>
               </div>
             </div>
