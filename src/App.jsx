@@ -55,6 +55,7 @@ function App() {
   const [beaverAction, setBeaverAction] = useState('idle'); // idle, joy, panic
   const [soundEnabled, setSoundEnabled] = useState(true);
   const [showSpeedUpToast, setShowSpeedUpToast] = useState(false);
+  const [showTutorial, setShowTutorial] = useState(false);
 
   const gameLoopRef = useRef(null);
   const holeSpawnRef = useRef(null);
@@ -330,6 +331,13 @@ function App() {
       {gameState === 'START' && (
         <div className="start-screen">
           <div className="start-header">
+            <button 
+              className="start-btn-icon btn-how-to" 
+              onClick={() => setShowTutorial(true)}
+              title="How to Play"
+            >
+              <Emoji symbol="❓" />
+            </button>
             <button className="start-btn-icon" onClick={() => setSoundEnabled(!soundEnabled)}>
               <Emoji symbol={soundEnabled ? '🔊' : '🔇'} />
             </button>
@@ -384,6 +392,43 @@ function App() {
             <button className="start-button" onClick={startGame}>수리 시작!</button>
           </div>
           <div className="made-by-credit">made in 함수철의 데모공장</div>
+
+          {showTutorial && (
+            <div className="tutorial-overlay" onClick={() => setShowTutorial(false)}>
+              <div className="tutorial-card" onClick={(e) => e.stopPropagation()}>
+                <button className="tutorial-close" onClick={() => setShowTutorial(false)}>
+                  <Emoji symbol="❌" />
+                </button>
+                <h2 className="tutorial-title">How to Play</h2>
+                <div className="tutorial-content">
+                  <div className="tutorial-item">
+                    <div className="tutorial-icon"><Emoji symbol="🛠️" /></div>
+                    <div className="tutorial-text">
+                      <strong>재료를 골라 댐의 틈을 막으세요</strong>
+                      <p>구멍 크기에 맞는 재료(잎, 나무, 돌)를 선택해 클릭하세요.</p>
+                    </div>
+                  </div>
+                  <div className="tutorial-item">
+                    <div className="tutorial-icon"><Emoji symbol="🌊" /></div>
+                    <div className="tutorial-text">
+                      <strong>시간이 지날수록 물살이 강해져요</strong>
+                      <p>수압이 100%가 되면 댐이 무너지니 주의하세요!</p>
+                    </div>
+                  </div>
+                  <div className="tutorial-item">
+                    <div className="tutorial-icon"><Emoji symbol="🏁" /></div>
+                    <div className="tutorial-text">
+                      <strong>끝까지 버티면 성공!</strong>
+                      <p>30초 동안 댐을 무사히 지켜내면 승리합니다.</p>
+                    </div>
+                  </div>
+                </div>
+                <button className="tutorial-start-btn" onClick={() => setShowTutorial(false)}>
+                  알겠어요!
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       )}
 
