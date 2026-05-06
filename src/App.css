@@ -852,3 +852,61 @@ body {
   25% { transform: translate(-1px, 1px); }
   75% { transform: translate(1px, -1px); }
 }
+
+/* Orientation Overlay */
+.orientation-overlay {
+  display: none;
+}
+
+@media screen and (orientation: landscape) and (max-height: 550px) {
+  .orientation-overlay {
+    display: flex;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(4px);
+    z-index: 10000;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+  }
+
+  .orientation-card {
+    background: white;
+    padding: 24px;
+    border-radius: 30px;
+    border: 6px solid var(--accent-orange);
+    text-align: center;
+    width: 90%;
+    max-width: 400px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  }
+
+  .orientation-icon {
+    font-size: 2.5rem;
+    animation: rotatePhone 2s infinite ease-in-out;
+  }
+
+  .orientation-text {
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: var(--text-dark);
+    word-break: keep-all;
+    line-height: 1.4;
+  }
+}
+
+@keyframes rotatePhone {
+  0% { transform: rotate(0deg); }
+  25% { transform: rotate(-90deg); }
+  50% { transform: rotate(-90deg); }
+  75% { transform: rotate(0deg); }
+  100% { transform: rotate(0deg); }
+}

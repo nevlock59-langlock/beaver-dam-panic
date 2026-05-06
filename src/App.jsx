@@ -520,6 +520,13 @@ function App() {
           </div>
         </div>
       )}
+
+      <div className="orientation-overlay">
+        <div className="orientation-card">
+          <div className="orientation-icon"><Emoji symbol="📱" /></div>
+          <p className="orientation-text">댐 수리는 세로 화면에서 가장 안정적이에요!</p>
+        </div>
+      </div>
     </div>
   );
 }
