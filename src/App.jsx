@@ -349,7 +349,8 @@ function App() {
     const holeType = HOLE_TYPES.find((t) => t.id === hole.type);
     if (holeType.repair === selectedMaterial) {
       // Success
-      const basePoints = holeType.score + combo * 2;
+      const comboBonus = Math.min(combo, 20) * 2;
+      const basePoints = holeType.score + comboBonus;
       const points = Math.round(basePoints * config.scoreMultiplier);
       const newCombo = combo + 1;
       setScore((prev) => prev + points);
