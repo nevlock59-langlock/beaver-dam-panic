@@ -390,6 +390,7 @@ body {
   background-color: var(--bg-cream);
   overflow: hidden;
   flex: 1;
+  position: relative;
 }
 
 .game-hud {
@@ -1060,6 +1061,107 @@ body {
   0%, 100% { transform: translate(0, 0); }
   25% { transform: translate(-1px, 1px); }
   75% { transform: translate(1px, -1px); }
+}
+
+/* In-game Tutorial & Mini Rules */
+.ingame-tutorial-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 150;
+  background: rgba(0,0,0,0.4);
+  backdrop-filter: blur(2px);
+  pointer-events: all;
+  animation: fadeInOut 2s forwards;
+}
+
+.ingame-tutorial-card {
+  background: rgba(255, 255, 255, 0.95);
+  padding: 16px 20px;
+  border-radius: 24px;
+  border: 5px solid var(--panel-border);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+  text-align: center;
+  transform: scale(1);
+  animation: popInBounce 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.ingame-tutorial-text {
+  font-size: 1.1rem;
+  font-weight: 900;
+  color: var(--primary-brown);
+  margin-bottom: 12px;
+  word-break: keep-all;
+}
+
+.ingame-tutorial-rules {
+  display: flex;
+  gap: 6px;
+  justify-content: center;
+}
+
+.mini-rules-summary {
+  position: absolute;
+  top: 85px; /* HUD 아래쪽 여백 공간 */
+  left: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.9);
+  padding: 4px 10px;
+  border-radius: 12px;
+  border: 2px solid var(--panel-border);
+  font-size: 0.7rem;
+  font-weight: 800;
+  z-index: 90;
+  pointer-events: none;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+  animation: slideInLeft 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.hint-label {
+  color: var(--accent-orange);
+  font-weight: 900;
+  margin-right: 2px;
+}
+
+.hint-item {
+  display: flex;
+  align-items: center;
+  color: var(--text-dark);
+}
+
+.tutorial-pill {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: white;
+  padding: 6px 12px;
+  border-radius: 16px;
+  border: 2px solid var(--panel-border);
+  font-size: 0.9rem;
+}
+
+@keyframes fadeInOut {
+  0% { opacity: 0; }
+  15% { opacity: 1; }
+  85% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+@keyframes popInBounce {
+  0% { transform: scale(0.5); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes slideInLeft {
+  0% { transform: translateX(-20px); opacity: 0; }
+  100% { transform: translateX(0); opacity: 1; }
 }
 
 /* Orientation Overlay */

@@ -78,6 +78,8 @@ function App() {
   const [soundEnabled, setSoundEnabled] = useState(true);
   const [showSpeedUpToast, setShowSpeedUpToast] = useState(false);
   const [showTutorial, setShowTutorial] = useState(false);
+  const [showInGameTutorial, setShowInGameTutorial] = useState(false);
+  const [showMiniRules, setShowMiniRules] = useState(false);
   const [showRecords, setShowRecords] = useState(false);
   const [bestScore, setBestScore] = useState(() => Number(localStorage.getItem('beaver-best-score')) || 0);
   const [bestScoreMode, setBestScoreMode] = useState(() => localStorage.getItem('beaver-best-score-mode') || '');
@@ -146,10 +148,24 @@ function App() {
     setIsPaused(false);
     setStars(0);
     setBeaverAction('idle');
-    setGameState('COUNTDOWN');
-    setCountdown(3);
+    setGameState('TUTORIAL');
+    setCountdown(null);
     setShowSpeedUpToast(false);
+    setShowInGameTutorial(true);
+    setShowMiniRules(false);
   };
+
+  useEffect(() => {
+    if (gameState === 'TUTORIAL') {
+      const timer = setTimeout(() => {
+        setGameState('PLAYING');
+        setShowInGameTutorial(false);
+        setShowMiniRules(true);
+        spawnHole();
+      }, 2000);
+      return () => clearTimeout(timer);
+    }
+  }, [gameState, spawnHole]);
 
   useEffect(() => {
     if (gameState === 'COUNTDOWN' && countdown !== null) {
@@ -161,6 +177,11 @@ function App() {
           setGameState('PLAYING');
           setCountdown(null);
           spawnHole();
+          setShowInGameTutorial(true);
+          setTimeout(() => {
+            setShowInGameTutorial(false);
+            setShowMiniRules(true);
+          }, 2000);
         }, 400); // 0.3~0.5초 사이 첫 구멍 생성
         return () => clearTimeout(timer);
       }
@@ -576,7 +597,7 @@ function App() {
         </div>
       )}
 
-      {(gameState === 'PLAYING' || gameState === 'COUNTDOWN') && (
+      {(gameState === 'PLAYING' || gameState === 'COUNTDOWN' || gameState === 'TUTORIAL') && (
         <div className="screen game-screen">
           <div className="game-hud">
             <div className="hud-stats">
@@ -614,7 +635,28 @@ function App() {
             </div>
           </div>
 
+          {showMiniRules && (
+            <div className="mini-rules-summary">
+              <span className="hint-label">HINT</span>
+              <span className="hint-item"><Emoji symbol="🍃" />→<Emoji symbol="💧" /></span>
+              <span className="hint-item"><Emoji symbol="🪵" />→<Emoji symbol="🌊" /></span>
+              <span className="hint-item"><Emoji symbol="🪨" />→<Emoji symbol="🌋" /></span>
+            </div>
+          )}
+
           <div className={`game-board ${pressure > 70 ? 'danger' : ''}`}>
+            {showInGameTutorial && (
+              <div className="ingame-tutorial-overlay">
+                <div className="ingame-tutorial-card">
+                  <p className="ingame-tutorial-text">맞는 재료 선택 → 구멍 탭!</p>
+                  <div className="ingame-tutorial-rules">
+                    <div className="tutorial-pill"><Emoji symbol="🍃" /> <span className="legend-arrow">→</span> <Emoji symbol="💧" /></div>
+                    <div className="tutorial-pill"><Emoji symbol="🪵" /> <span className="legend-arrow">→</span> <Emoji symbol="🌊" /></div>
+                    <div className="tutorial-pill"><Emoji symbol="🪨" /> <span className="legend-arrow">→</span> <Emoji symbol="🌋" /></div>
+                  </div>
+                </div>
+              </div>
+            )}
             {showSpeedUpToast && (
               <div className="speed-up-toast">SPEED UP! <Emoji symbol="⚡" /></div>
             )}
