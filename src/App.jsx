@@ -350,7 +350,7 @@ function App() {
     if (holeType.repair === selectedMaterial) {
       // Success
       const basePoints = holeType.score + combo * 2;
-      const points = basePoints * config.scoreMultiplier;
+      const points = Math.round(basePoints * config.scoreMultiplier);
       const newCombo = combo + 1;
       setScore((prev) => prev + points);
       setCombo(newCombo);
