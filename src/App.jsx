@@ -461,16 +461,25 @@ function App() {
             
             <div className="start-legend">
               <div className="start-pill">
-                <div className="mini-hole small"></div>
-                <span className="legend-text"><Emoji symbol="🍃" /></span>
+                <span className="legend-text">
+                  <Emoji symbol="🍃" />
+                  <span className="legend-arrow">→</span>
+                  <Emoji symbol="💧" />
+                </span>
               </div>
               <div className="start-pill">
-                <div className="mini-hole medium"></div>
-                <span className="legend-text"><Emoji symbol="🪵" /></span>
+                <span className="legend-text">
+                  <Emoji symbol="🪵" />
+                  <span className="legend-arrow">→</span>
+                  <Emoji symbol="🌊" />
+                </span>
               </div>
               <div className="start-pill">
-                <div className="mini-hole large"></div>
-                <span className="legend-text"><Emoji symbol="🪨" /></span>
+                <span className="legend-text">
+                  <Emoji symbol="🪨" />
+                  <span className="legend-arrow">→</span>
+                  <Emoji symbol="🌋" />
+                </span>
               </div>
             </div>
 
