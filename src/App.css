@@ -1171,3 +1171,11 @@ body {
     transform: translateX(-50%) translateY(-3px) scale(1.08);
   }
 }
+
+/* Strong visual hint: highlight holes/bubbles only */
+.game-area .hole.hole-hint {
+  outline: 4px solid var(--accent-orange);
+  outline-offset: 6px;
+  box-shadow: 0 0 0 6px rgba(255, 140, 0, 0.2), 0 0 20px rgba(255, 140, 0, 0.85);
+  animation: holeHintPulse 0.8s ease-in-out infinite;
+}
