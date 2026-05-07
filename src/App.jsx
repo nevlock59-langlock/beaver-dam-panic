@@ -65,6 +65,7 @@ function App() {
   const [pressure, setPressure] = useState(0);
   const [holes, setHoles] = useState([]);
   const [selectedMaterial, setSelectedMaterial] = useState(null);
+  const [showHoleHint, setShowHoleHint] = useState(false);
   const [combo, setCombo] = useState(0);
   const [feedbacks, setFeedbacks] = useState([]);
   const [screenEffect, setScreenEffect] = useState(null); // 'success', 'failure'
@@ -86,6 +87,7 @@ function App() {
   const holesRef = useRef([]);
   const timeLeftRef = useRef(MODE_CONFIG.EASY.duration);
   const gameModeRef = useRef('EASY');
+  const holeHintTimerRef = useRef(null);
 
   // Sync refs with state for use in intervals without re-triggering them
   useEffect(() => {
@@ -336,6 +338,13 @@ function App() {
 
   const handleMaterialSelect = (materialId) => {
     setSelectedMaterial(materialId);
+    setShowHoleHint(true);
+
+    if (holeHintTimerRef.current) clearTimeout(holeHintTimerRef.current);
+
+    holeHintTimerRef.current = setTimeout(() => {
+      setShowHoleHint(false);
+    }, 3000);
   };
 
   const addFeedback = (x, y, value, type, icon = null) => {
@@ -344,6 +353,9 @@ function App() {
 
   const handleHoleClick = (hole) => {
     if (!selectedMaterial) return;
+
+    setShowHoleHint(false);
+    if (holeHintTimerRef.current) clearTimeout(holeHintTimerRef.current);
 
     const config = MODE_CONFIG[gameModeRef.current];
     const holeType = HOLE_TYPES.find((t) => t.id === hole.type);
@@ -610,7 +622,7 @@ function App() {
                   {holes.map((hole) => (
                   <button
                   key={hole.id}
-                  className={`hole hole-${hole.type}`}
+                  className={`hole hole-${hole.type} ${showHoleHint && selectedMaterial ? 'hole-hint' : ''}`}
                   style={{ left: `${hole.x}%`, top: `${hole.y}%` }}
                   onClick={() => handleHoleClick(hole)}
                   >
