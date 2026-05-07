@@ -1,3 +1,10 @@
+# 🦫 Beaver Dam Panic
+
+A cute mobile-first beaver dam repair mini game.
+
+Play here: https://beaver-dam-panic.vercel.app
+
+
 # React + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
