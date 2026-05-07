@@ -1361,3 +1361,72 @@ body,
   min-height: 100svh;
   overflow: hidden;
 }
+
+/* === GPT_FIX_BEGIN: hint visible layout === */
+
+.screen.game-screen .mini-rules-summary {
+  position: relative !important;
+  top: auto !important;
+  left: auto !important;
+  right: auto !important;
+  bottom: auto !important;
+  transform: none !important;
+
+  z-index: 120;
+  pointer-events: none;
+
+  width: fit-content;
+  max-width: calc(100% - 28px);
+  margin: 6px 0 0 16px;
+  padding: 4px 8px;
+
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 6px;
+
+  background: rgba(255, 249, 236, 0.96);
+  border: 2px solid var(--panel-border);
+  border-radius: 999px;
+  box-shadow: 0 2px 0 rgba(0, 0, 0, 0.08);
+
+  white-space: nowrap;
+}
+
+.screen.game-screen .hint-label {
+  font-size: 0.56rem;
+  font-weight: 900;
+  letter-spacing: 0.5px;
+  color: var(--primary-brown);
+}
+
+.screen.game-screen .hint-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  font-size: 0.72rem;
+  font-weight: 900;
+  color: var(--text-dark);
+  line-height: 1;
+}
+
+.screen.game-screen .hint-item .emoji-container {
+  width: 1em;
+  height: 1em;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.screen.game-screen .hint-item .emoji-container img {
+  width: 1em;
+  height: 1em;
+  display: block;
+}
+
+.screen.game-screen .game-board {
+  margin-top: 8px;
+}
+
+/* === GPT_FIX_END: hint visible layout === */
+
