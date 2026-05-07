@@ -490,7 +490,12 @@ body {
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  gap: 10px;
+  gap: 8px;
+}
+
+.hud-btn-group {
+  display: flex;
+  gap: 6px;
 }
 
 .equipped-box {
@@ -511,13 +516,24 @@ body {
   box-shadow: 0 2px 0 var(--accent-orange-dark);
 }
 
-.btn-pause-small {
+.btn-hud-small {
   background: var(--bg-warm);
   border: 2px solid var(--panel-border);
   border-radius: 8px;
   font-size: 1rem;
-  padding: 4px 8px;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   cursor: pointer;
+  box-shadow: 0 2px 0 var(--panel-border);
+  transition: all 0.1s;
+}
+
+.btn-hud-small:active {
+  transform: translateY(1px);
+  box-shadow: none;
 }
 
 /* Game Board */
@@ -1105,37 +1121,6 @@ body {
   justify-content: center;
 }
 
-.mini-rules-summary {
-  position: absolute;
-  top: 85px; /* HUD 아래쪽 여백 공간 */
-  left: 16px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  background: rgba(255, 255, 255, 0.9);
-  padding: 4px 10px;
-  border-radius: 12px;
-  border: 2px solid var(--panel-border);
-  font-size: 0.7rem;
-  font-weight: 800;
-  z-index: 90;
-  pointer-events: none;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-  animation: slideInLeft 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-}
-
-.hint-label {
-  color: var(--accent-orange);
-  font-weight: 900;
-  margin-right: 2px;
-}
-
-.hint-item {
-  display: flex;
-  align-items: center;
-  color: var(--text-dark);
-}
-
 .tutorial-pill {
   display: flex;
   align-items: center;
@@ -1361,95 +1346,4 @@ body,
   min-height: 100svh;
   overflow: hidden;
 }
-
-
-/* === GPT_FIX_BEGIN: hint safe readable layout === */
-
-.screen.game-screen .mini-rules-summary {
-  position: relative !important;
-  top: auto !important;
-  left: auto !important;
-  right: auto !important;
-  bottom: auto !important;
-  transform: none !important;
-
-  z-index: 120;
-  pointer-events: none;
-
-  width: fit-content;
-  max-width: calc(100% - 36px);
-  margin: 8px auto 8px;
-  padding: 7px 13px;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 11px;
-
-  background: rgba(255, 249, 236, 0.98);
-  border: 2px solid var(--panel-border);
-  border-radius: 999px;
-  box-shadow: 0 3px 0 rgba(0, 0, 0, 0.08);
-
-  white-space: nowrap;
-}
-
-.screen.game-screen .hint-label {
-  font-size: 0.64rem;
-  font-weight: 900;
-  letter-spacing: 0.9px;
-  color: var(--primary-brown);
-  opacity: 0.82;
-}
-
-.screen.game-screen .hint-item {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 4px;
-
-  font-size: 0.9rem;
-  font-weight: 900;
-  color: var(--text-dark);
-  line-height: 1;
-}
-
-.screen.game-screen .hint-item .emoji-container {
-  width: 1.18em;
-  height: 1.18em;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.screen.game-screen .hint-item .emoji-container img {
-  width: 1.18em;
-  height: 1.18em;
-  display: block;
-}
-
-/* 보드는 HINT 아래에서 바로 시작 */
-.screen.game-screen .game-board {
-  margin-top: 6px !important;
-}
-
-@media (max-width: 380px) {
-  .screen.game-screen .mini-rules-summary {
-    gap: 8px;
-    padding: 6px 10px;
-    max-width: calc(100% - 24px);
-  }
-
-  .screen.game-screen .hint-label {
-    font-size: 0.58rem;
-    letter-spacing: 0.6px;
-  }
-
-  .screen.game-screen .hint-item {
-    gap: 3px;
-    font-size: 0.82rem;
-  }
-}
-
-/* === GPT_FIX_END: hint safe readable layout === */
 

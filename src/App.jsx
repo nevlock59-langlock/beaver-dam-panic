@@ -79,7 +79,7 @@ function App() {
   const [showSpeedUpToast, setShowSpeedUpToast] = useState(false);
   const [showTutorial, setShowTutorial] = useState(false);
   const [showInGameTutorial, setShowInGameTutorial] = useState(false);
-  const [showMiniRules, setShowMiniRules] = useState(false);
+  const [showHelpModal, setShowHelpModal] = useState(false);
   const [showRecords, setShowRecords] = useState(false);
   const [bestScore, setBestScore] = useState(() => Number(localStorage.getItem('beaver-best-score')) || 0);
   const [bestScoreMode, setBestScoreMode] = useState(() => localStorage.getItem('beaver-best-score-mode') || '');
@@ -113,7 +113,7 @@ function App() {
       const type = HOLE_TYPES[Math.floor(Math.random() * HOLE_TYPES.length)];
       let newX, newY, tooClose;
       let attempts = 0;
-      
+
       do {
         newX = Math.random() * 80 + 10;
         newY = Math.random() * 65 + 10;
@@ -152,7 +152,7 @@ function App() {
     setCountdown(null);
     setShowSpeedUpToast(false);
     setShowInGameTutorial(true);
-    setShowMiniRules(false);
+    setShowHelpModal(false);
   };
 
   useEffect(() => {
@@ -160,7 +160,6 @@ function App() {
       const timer = setTimeout(() => {
         setGameState('PLAYING');
         setShowInGameTutorial(false);
-        setShowMiniRules(true);
         spawnHole();
       }, 2000);
       return () => clearTimeout(timer);
@@ -180,7 +179,6 @@ function App() {
           setShowInGameTutorial(true);
           setTimeout(() => {
             setShowInGameTutorial(false);
-            setShowMiniRules(true);
           }, 2000);
         }, 400); // 0.3~0.5초 사이 첫 구멍 생성
         return () => clearTimeout(timer);
@@ -194,7 +192,7 @@ function App() {
     const highScore = highScores[currentMode];
     const newRecord = score > highScore;
     const survivalTime = config.duration - timeLeftRef.current;
-    
+
     let earnedStars = 0;
     if (pressure < MAX_PRESSURE || survivalTime >= config.starThresholds[2]) earnedStars = 3;
     else if (survivalTime >= config.starThresholds[1]) earnedStars = 2;
@@ -206,7 +204,7 @@ function App() {
       setStars(earnedStars);
       if (newRecord) setIsNewRecord(true);
     }, 1500);
-    
+
     if (newRecord) {
       setHighScores(prev => {
         const updated = { ...prev, [currentMode]: score };
@@ -249,7 +247,7 @@ function App() {
         setTimeLeft((prev) => {
           const next = prev - 1;
           const elapsed = duration - next;
-          
+
           // Speed up toast: halfway through the last stage
           // For Easy(30s): elapsed is 20 (next is 10)
           // For Hard(60s): elapsed is 40 (next is 20)
@@ -264,7 +262,7 @@ function App() {
           }
           return next;
         });
-        
+
         // Pressure update
         setPressure((prev) => {
           const currentHoles = holesRef.current;
@@ -278,19 +276,19 @@ function App() {
 
           // 기본 상승폭: 구멍이 있을 때만 의미 있게 상승
           let increment = 1.5; 
-          
+
           // 시간 경과에 따른 가속 (전체 시간 대비 비율로 계산하여 난이도 곡선 유지)
           if (elapsed >= duration * 0.66) increment += 2.0; 
           else if (elapsed >= duration * 0.33) increment += 1.0;
-          
+
           // 개별 구멍당 수압 기여도 (강화)
           increment += (currentHoles.length * 2.0);
-          
+
           // 위험 구간 추가 페널티
           if (prev >= 80) increment += 1.0;
 
           const next = prev + increment;
-          
+
           if (next >= MAX_PRESSURE) {
             clearInterval(gameLoopRef.current);
             endGame();
@@ -315,20 +313,20 @@ function App() {
         if (elapsed < duration * 0.66) return 1100; // 2단계
         return 900;                  // 3단계
       };
-      
+
       const startSpawning = () => {
         const elapsed = duration - timeLeftRef.current;
         const interval = getSpawnInterval(elapsed);
-        
+
         if (holeSpawnRef.current) clearInterval(holeSpawnRef.current);
-        
+
         holeSpawnRef.current = setInterval(() => {
           spawnHole();
         }, interval);
       };
 
       startSpawning();
-      
+
       const checkInterval = setInterval(() => {
         const elapsed = duration - timeLeftRef.current;
         // Check for phase transitions (10/20 for Easy, 20/40 for Hard)
@@ -395,14 +393,14 @@ function App() {
       const newCombo = combo + 1;
       setScore((prev) => prev + points);
       setCombo(newCombo);
-      
+
       setHoles((prev) => prev.filter((h) => h.id !== hole.id));
       setPressure((prev) => Math.max(0, prev - 5));
       setScreenEffect('success');
-      
+
       const materialIcon = MATERIALS.find(m => m.id === selectedMaterial).emoji;
       addFeedback(hole.x, hole.y, `+${points}`, 'success', materialIcon);
-      
+
       setBeaverAction('joy');
       setTimeout(() => setBeaverAction('idle'), 500);
     } else {
@@ -421,6 +419,16 @@ function App() {
       setTimeout(() => setBeaverAction('idle'), 500);
     }
     setSelectedMaterial(null);
+  };
+
+  const openHelp = () => {
+    setIsPaused(true);
+    setShowHelpModal(true);
+  };
+
+  const closeHelp = () => {
+    setIsPaused(false);
+    setShowHelpModal(false);
   };
 
   return (
@@ -465,7 +473,7 @@ function App() {
               <div className="dam-plank"></div>
             </div>
             <h1 className="start-title">Beaver Dam Panic</h1>
-            
+
             <div className="start-rules">
               <div className="step">
                 <span className="step-num">1</span>
@@ -479,7 +487,7 @@ function App() {
                 <span className="step-text">구멍 수리!</span>
               </div>
             </div>
-            
+
             <div className="start-legend">
               <div className="start-pill">
                 <span className="legend-text">
@@ -524,7 +532,7 @@ function App() {
                 HARD
               </button>
             </div>
-            
+
             <button className="start-button" onClick={startGame}>수리 시작!</button>
           </div>
           <div className="made-by-credit">made in 함수철의 데모공장</div>
@@ -620,7 +628,7 @@ function App() {
                 <span className="pressure-label">PRESSURE</span>
               </div>
             </div>
-            
+
             <div className="hud-actions">
               <div className="mini-equipped">
                 <div className={`equipped-box ${selectedMaterial ? 'has-item' : ''}`}>
@@ -631,18 +639,12 @@ function App() {
                   ) : <Emoji symbol="🛠️" />}
                 </div>
               </div>
-              <button className="btn-pause-small" onClick={() => setIsPaused(true)}><Emoji symbol="⏸️" /></button>
+              <div className="hud-btn-group">
+                <button className="btn-hud-small" onClick={openHelp}><Emoji symbol="❓" /></button>
+                <button className="btn-hud-small" onClick={() => setIsPaused(true)}><Emoji symbol="⏸️" /></button>
+              </div>
             </div>
           </div>
-
-          {showMiniRules && (
-            <div className="mini-rules-summary">
-              <span className="hint-label">HINT</span>
-              <span className="hint-item"><Emoji symbol="🍃" />→<Emoji symbol="💧" /></span>
-              <span className="hint-item"><Emoji symbol="🪵" />→<Emoji symbol="🌊" /></span>
-              <span className="hint-item"><Emoji symbol="🪨" />→<Emoji symbol="🌋" /></span>
-            </div>
-          )}
 
           <div className={`game-board ${pressure > 70 ? 'danger' : ''}`}>
             {showInGameTutorial && (
@@ -657,71 +659,83 @@ function App() {
                 </div>
               </div>
             )}
+            {showHelpModal && (
+              <div className="tutorial-overlay">
+                <div className="ingame-tutorial-card">
+                  <p className="ingame-tutorial-text">맞는 재료 선택 → 구멍 탭!</p>
+                  <div className="ingame-tutorial-rules">
+                    <div className="tutorial-pill"><Emoji symbol="🍃" /> <span className="legend-arrow">→</span> <Emoji symbol="💧" /></div>
+                    <div className="tutorial-pill"><Emoji symbol="🪵" /> <span className="legend-arrow">→</span> <Emoji symbol="🌊" /></div>
+                    <div className="tutorial-pill"><Emoji symbol="🪨" /> <span className="legend-arrow">→</span> <Emoji symbol="🌋" /></div>
+                  </div>
+                  <button className="btn-resume" style={{ marginTop: '20px' }} onClick={closeHelp}>계속하기</button>
+                </div>
+              </div>
+            )}
             {showSpeedUpToast && (
               <div className="speed-up-toast">SPEED UP! <Emoji symbol="⚡" /></div>
             )}
-            {isPaused && (
+            {isPaused && !showHelpModal && (
               <div className="pause-overlay">
                 <div className="pause-card">
                   <h2>잠시 휴식 중!</h2>
                   <p>비버가 숨을 고르고 있어요.</p>
                   <button className="btn-resume" onClick={() => setIsPaused(false)}>계속하기</button>
-                  </div>
-                  </div>
-                  )}
-                  <div className={`beaver-game-avatar action-${beaverAction} ${pressure > 70 && beaverAction === 'idle' ? 'panic' : ''}`}>
-                  <img src={beaverImg} alt="beaver" className="beaver-img" />
-                  </div>
-                  <div
-                  className="water-overlay"
-                  style={{ height: `${pressure}%` }}
-                  >
-                  </div>
-                  {holes.map((hole) => (
-                  <button
-                  key={hole.id}
-                  className={`hole hole-${hole.type} ${
-                      showHoleHint &&
-                      selectedMaterial &&
-                      HOLE_TYPES.find((t) => t.id === hole.type)?.repair === selectedMaterial
-                        ? 'hole-hint'
-                        : ''
-                    }`}
-                  style={{ left: `${hole.x}%`, top: `${hole.y}%` }}
-                  onClick={() => handleHoleClick(hole)}
-                  >
-                  <div className="hole-inner">
+                </div>
+              </div>
+            )}
+            <div className={`beaver-game-avatar action-${beaverAction} ${pressure > 70 && beaverAction === 'idle' ? 'panic' : ''}`}>
+              <img src={beaverImg} alt="beaver" className="beaver-img" />
+            </div>
+            <div
+              className="water-overlay"
+              style={{ height: `${pressure}%` }}
+            >
+            </div>
+            {holes.map((hole) => (
+              <button
+                key={hole.id}
+                className={`hole hole-${hole.type} ${
+                  showHoleHint &&
+                  selectedMaterial &&
+                  HOLE_TYPES.find((t) => t.id === hole.type)?.repair === selectedMaterial
+                    ? 'hole-hint'
+                    : ''
+                }`}
+                style={{ left: `${hole.x}%`, top: `${hole.y}%` }}
+                onClick={() => handleHoleClick(hole)}
+              >
+                <div className="hole-inner">
                   <Emoji symbol={HOLE_TYPES.find(t => t.id === hole.type).emoji} />
-                  </div>
-                  </button>
-                  ))}
-                  {feedbacks.map((fb) => (
-                  <div
-                  key={fb.id}
-                  className={`feedback-text feedback-${fb.type}`}
-                  style={{ left: `${fb.x}%`, top: `${fb.y}%` }}
-                  >
-                  {fb.icon && <span className="feedback-icon"><Emoji symbol={fb.icon} /></span>}
-                  <span className="feedback-val">{fb.value}</span>
-                  </div>
-                  ))}
-                  </div>
+                </div>
+              </button>
+            ))}
+            {feedbacks.map((fb) => (
+              <div
+                key={fb.id}
+                className={`feedback-text feedback-${fb.type}`}
+                style={{ left: `${fb.x}%`, top: `${fb.y}%` }}
+              >
+                {fb.icon && <span className="feedback-icon"><Emoji symbol={fb.icon} /></span>}
+                <span className="feedback-val">{fb.value}</span>
+              </div>
+            ))}
+          </div>
 
-                  <div className="material-dock">
-                  {MATERIALS.map((mat) => (
-                  <button
-                  key={mat.id}
-                  className={`dock-item ${selectedMaterial === mat.id ? 'selected' : ''}`}
-                  onClick={() => handleMaterialSelect(mat.id)}
-                  >
-                  <span className="dock-icon"><Emoji symbol={mat.emoji} /></span>
-                  <span className="dock-label">{mat.label}</span>
-                  </button>
-                  ))}
-                  </div>
-                  </div>
-                  )}
-
+          <div className="material-dock">
+            {MATERIALS.map((mat) => (
+              <button
+                key={mat.id}
+                className={`dock-item ${selectedMaterial === mat.id ? 'selected' : ''}`}
+                onClick={() => handleMaterialSelect(mat.id)}
+              >
+                <span className="dock-icon"><Emoji symbol={mat.emoji} /></span>
+                <span className="dock-label">{mat.label}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
                   {gameState === 'GAMEOVER' && (
                   <div className={`screen result-screen ${pressure >= MAX_PRESSURE ? 'burst' : 'safe'}`}>
                   <div className="bg-clouds">
