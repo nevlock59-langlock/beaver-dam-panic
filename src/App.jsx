@@ -87,7 +87,8 @@ function App() {
   const holesRef = useRef([]);
   const timeLeftRef = useRef(MODE_CONFIG.EASY.duration);
   const gameModeRef = useRef('EASY');
-  const holeHintTimerRef = useRef(null);
+  const holeHintDelayTimerRef = useRef(null);
+  const holeHintHideTimerRef = useRef(null);
 
   // Sync refs with state for use in intervals without re-triggering them
   useEffect(() => {
@@ -338,13 +339,18 @@ function App() {
 
   const handleMaterialSelect = (materialId) => {
     setSelectedMaterial(materialId);
-    setShowHoleHint(true);
+    setShowHoleHint(false);
 
-    if (holeHintTimerRef.current) clearTimeout(holeHintTimerRef.current);
+    if (holeHintDelayTimerRef.current) clearTimeout(holeHintDelayTimerRef.current);
+    if (holeHintHideTimerRef.current) clearTimeout(holeHintHideTimerRef.current);
 
-    holeHintTimerRef.current = setTimeout(() => {
-      setShowHoleHint(false);
-    }, 3000);
+    holeHintDelayTimerRef.current = setTimeout(() => {
+      setShowHoleHint(true);
+
+      holeHintHideTimerRef.current = setTimeout(() => {
+        setShowHoleHint(false);
+      }, 3000);
+    }, 1000);
   };
 
   const addFeedback = (x, y, value, type, icon = null) => {
@@ -355,7 +361,8 @@ function App() {
     if (!selectedMaterial) return;
 
     setShowHoleHint(false);
-    if (holeHintTimerRef.current) clearTimeout(holeHintTimerRef.current);
+    if (holeHintDelayTimerRef.current) clearTimeout(holeHintDelayTimerRef.current);
+    if (holeHintHideTimerRef.current) clearTimeout(holeHintHideTimerRef.current);
 
     const config = MODE_CONFIG[gameModeRef.current];
     const holeType = HOLE_TYPES.find((t) => t.id === hole.type);
