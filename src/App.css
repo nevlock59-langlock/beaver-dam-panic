@@ -1203,3 +1203,12 @@ body {
     0 0 0 2px rgba(255,255,255,0.55),
     0 0 14px rgba(253,224,71,0.75) !important;
 }
+
+/* Beaver Dam Panic: subtle visible holes for dark mode */
+.hole {
+  background: #020617 !important;
+  border: 2px solid #facc15 !important;
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,0.35),
+    0 0 8px rgba(250,204,21,0.45) !important;
+}
