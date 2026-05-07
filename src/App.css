@@ -1246,3 +1246,16 @@ body {
       0 0 7px rgba(250,204,21,0.38) !important;
   }
 }
+
+/* Beaver Dam Panic: safer mobile viewport height fix */
+html,
+body,
+#root {
+  margin: 0;
+  width: 100%;
+  height: 100vh;
+  height: 100svh;
+  min-height: 100vh;
+  min-height: 100svh;
+  overflow: hidden;
+}
