@@ -629,7 +629,13 @@ function App() {
                   {holes.map((hole) => (
                   <button
                   key={hole.id}
-                  className={`hole hole-${hole.type} ${showHoleHint && selectedMaterial ? 'hole-hint' : ''}`}
+                  className={`hole hole-${hole.type} ${
+                      showHoleHint &&
+                      selectedMaterial &&
+                      HOLE_TYPES.find((t) => t.id === hole.type)?.repair === selectedMaterial
+                        ? 'hole-hint'
+                        : ''
+                    }`}
                   style={{ left: `${hole.x}%`, top: `${hole.y}%` }}
                   onClick={() => handleHoleClick(hole)}
                   >
