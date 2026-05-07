@@ -1194,3 +1194,12 @@ body {
   font-weight: 900;
   color: var(--accent-orange);
 }
+
+/* Beaver Dam Panic: make holes visible in dark mode */
+.hole {
+  background: #020617 !important;
+  border: 3px solid #fde047 !important;
+  box-shadow:
+    0 0 0 2px rgba(255,255,255,0.55),
+    0 0 14px rgba(253,224,71,0.75) !important;
+}
