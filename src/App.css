@@ -1362,7 +1362,8 @@ body,
   overflow: hidden;
 }
 
-/* === GPT_FIX_BEGIN: hint visible layout === */
+
+/* === GPT_FIX_BEGIN: hint safe readable layout === */
 
 .screen.game-screen .mini-rules-summary {
   position: relative !important;
@@ -1376,57 +1377,79 @@ body,
   pointer-events: none;
 
   width: fit-content;
-  max-width: calc(100% - 28px);
-  margin: 6px 0 0 16px;
-  padding: 4px 8px;
+  max-width: calc(100% - 36px);
+  margin: 8px auto 8px;
+  padding: 7px 13px;
 
   display: flex;
   align-items: center;
-  justify-content: flex-start;
-  gap: 6px;
+  justify-content: center;
+  gap: 11px;
 
-  background: rgba(255, 249, 236, 0.96);
+  background: rgba(255, 249, 236, 0.98);
   border: 2px solid var(--panel-border);
   border-radius: 999px;
-  box-shadow: 0 2px 0 rgba(0, 0, 0, 0.08);
+  box-shadow: 0 3px 0 rgba(0, 0, 0, 0.08);
 
   white-space: nowrap;
 }
 
 .screen.game-screen .hint-label {
-  font-size: 0.56rem;
+  font-size: 0.64rem;
   font-weight: 900;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.9px;
   color: var(--primary-brown);
+  opacity: 0.82;
 }
 
 .screen.game-screen .hint-item {
   display: inline-flex;
   align-items: center;
-  gap: 2px;
-  font-size: 0.72rem;
+  justify-content: center;
+  gap: 4px;
+
+  font-size: 0.9rem;
   font-weight: 900;
   color: var(--text-dark);
   line-height: 1;
 }
 
 .screen.game-screen .hint-item .emoji-container {
-  width: 1em;
-  height: 1em;
+  width: 1.18em;
+  height: 1.18em;
   display: inline-flex;
   align-items: center;
   justify-content: center;
 }
 
 .screen.game-screen .hint-item .emoji-container img {
-  width: 1em;
-  height: 1em;
+  width: 1.18em;
+  height: 1.18em;
   display: block;
 }
 
+/* 보드는 HINT 아래에서 바로 시작 */
 .screen.game-screen .game-board {
-  margin-top: 8px;
+  margin-top: 6px !important;
 }
 
-/* === GPT_FIX_END: hint visible layout === */
+@media (max-width: 380px) {
+  .screen.game-screen .mini-rules-summary {
+    gap: 8px;
+    padding: 6px 10px;
+    max-width: calc(100% - 24px);
+  }
+
+  .screen.game-screen .hint-label {
+    font-size: 0.58rem;
+    letter-spacing: 0.6px;
+  }
+
+  .screen.game-screen .hint-item {
+    gap: 3px;
+    font-size: 0.82rem;
+  }
+}
+
+/* === GPT_FIX_END: hint safe readable layout === */
 
