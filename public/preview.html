@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <title>Beaver Dam Panic Preview</title>
+  <style>
+    body {
+      margin: 0;
+      background: #f8f2e7;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    .preview-viewport {
+      width: 1200px;
+      height: 630px;
+      overflow: hidden;
+      transform-origin: top left;
+    }
+
+    .card {
+      width: 1200px;
+      height: 630px;
+      box-sizing: border-box;
+      position: relative;
+      overflow: hidden;
+
+      background: #ffffff;
+      border: 24px solid #e3d4bd;
+      border-radius: 48px;
+    }
+.beaver-img {
+      position: absolute;
+      right: 260px;
+      top: 88px;
+      width: 340px;
+      height: 340px;
+      object-fit: contain;
+      z-index: 2;
+      filter: drop-shadow(0 12px 0 rgba(80, 50, 25, 0.16));
+    }
+
+    .title {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 455px;
+
+      text-align: center;
+      font-size: 66px;
+      line-height: 1.15;
+      font-weight: 950;
+      letter-spacing: -2px;
+      color: #3b2a1e;
+      text-shadow: 0 6px 0 rgba(120, 80, 40, 0.16);
+      padding: 0 60px;
+      box-sizing: border-box;
+      z-index: 3;
+    }
+
+    .credit {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 28px;
+
+      text-align: center;
+      font-size: 24px;
+      font-weight: 700;
+      color: rgba(80, 60, 45, 0.42);
+      z-index: 3;
+    }
+
+    @media (max-width: 1200px) {
+      .preview-viewport {
+        transform: scale(calc(100vw / 1200));
+      }
+
+      body {
+        width: 100vw;
+        height: calc(630px * (100vw / 1200));
+        overflow: hidden;
+      }
+    }
+  
+.panic-mark {
+      position: absolute;
+      right: 210px;
+      top: 82px;
+      z-index: 4;
+
+      font-size: 78px;
+      line-height: 1;
+      font-weight: 750;
+      letter-spacing: -5px;
+
+      color: #ff8a00;
+      text-shadow:
+        0 4px 0 rgba(120, 70, 20, 0.18),
+        0 0 0 #ffffff;
+      transform: rotate(8deg);
+    }
+.title-sub {
+      font-weight: 700 !important;
+    }
+
+    .side-scene {
+      position: absolute;
+      right: 36px;
+      top: 205px;
+      width: 220px;
+      height: 130px;
+      z-index: 3;
+      pointer-events: none;
+    }
+
+    .scene-icon {
+      width: 112px;
+      height: 112px;
+      object-fit: contain;
+      display: block;
+      position: absolute;
+    }
+
+    .house-icon {
+      left: 150px;
+      top: 68px;
+      width: 92px;
+  height: 92px;
+}
+
+      left: 88px;
+      top: 58px;
+      width: 74px;
+  height: 74px;
+}
+
+    /* Waves */
+    .wave-cluster {
+      position: absolute;
+      left: 90px;
+      top: 105px;
+      width: 500px;
+      height: 320px;
+      z-index: 1;
+    }
+
+    .tw-wave {
+      position: absolute;
+      width: 271px;
+      height: 271px;
+      object-fit: contain;
+      opacity: 1;
+      filter: drop-shadow(0 8px 0 rgba(60, 90, 120, 0.12));
+    }
+
+    .wave1 {
+      left: 100px;
+      top: 120px;
+    }
+
+    .wave2 {
+      left: 290px;
+      top: 120px;
+    }
+
+  
+    /* FINAL: hut size 175% */
+    .house-icon {
+      width: 161px !important;
+      height: 161px !important;
+    }
+
+  
+    /* FINAL: move hut up by 30% of its height */
+    .house-icon {
+      width: 161px !important;
+      height: 161px !important;
+      top: 20px !important;
+    }
+
+  
+    /* FINAL: move hut left by 15% of its width */
+    .house-icon {
+      left: -6px !important;
+      top: 20px !important;
+      width: 161px !important;
+      height: 161px !important;
+    }
+
+  
+    /* FINAL: move beaver 12px right */
+    .beaver-img {
+      right: 248px !important;
+    }
+
+  
+    /* FINAL: move beaver 8px more right */
+    .beaver-img {
+      right: 240px !important;
+    }
+
+  </style>
+</head>
+<body>
+  <div class="preview-viewport">
+    <div class="card">
+      <div class="wave-cluster" aria-hidden="true">
+        <img class="tw-wave wave1" src="https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f30a.svg" alt="" />
+        <img class="tw-wave wave2" src="https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f30a.svg" alt="" />
+
+</div>
+
+      <img class="beaver-img" src="/beaver.png" alt="Beaver" />
+
+      <div class="side-scene" aria-hidden="true">
+        <img class="scene-icon house-icon" src="https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f6d6.svg" alt="" />
+      </div>
+
+      <div class="panic-mark">!!</div>
+
+      <div class="title"><span class="title-main">BEAVER DAM PANIC:</span> <span class="title-sub">댐을 지켜라!</span></div>
+      <div class="credit">made in 함수철의 데모공장</div>
+    </div>
+  </div>
+</body>
+</html>
