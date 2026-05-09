@@ -38,25 +38,67 @@ const MATERIALS = [
 const Emoji = ({ symbol, className = "" }) => {
   if (!symbol) return null;
   
-  // Parse the emoji symbol using twemoji to get SVG images
-  const html = twemoji.parse(symbol, {
-    folder: 'svg',
-    ext: '.svg',
-    base: 'https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/'
-  });
+  let html = null;
+  try {
+    // Parse the emoji symbol using twemoji to get SVG images
+    const tw = twemoji?.default || twemoji;
+    if (tw && typeof tw.parse === 'function') {
+      html = tw.parse(symbol, {
+        folder: 'svg',
+        ext: '.svg',
+        base: 'https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/'
+      });
+    }
+  } catch (error) {
+    console.error("Twemoji parse error:", error);
+  }
 
+  if (html) {
+    return (
+      <span 
+        className={`emoji-container ${className}`} 
+        dangerouslySetInnerHTML={{ __html: html }}
+      />
+    );
+  }
+
+  // Fallback to plain emoji if twemoji is unavailable or fails
   return (
-    <span 
-      className={`emoji-container ${className}`} 
-      dangerouslySetInnerHTML={{ __html: html }}
-    />
+    <span className={`emoji-container ${className}`}>
+      {symbol}
+    </span>
   );
 };
 
+// Custom Share icon (Lucide Share2 style) as requested
+const Share2Icon = ({ className = "" }) => (
+  <span className={`emoji-container ${className}`}>
+    <svg 
+      xmlns="http://www.w3.org/2000/svg" 
+      width="1em" 
+      height="1em" 
+      viewBox="0 0 24 24" 
+      fill="none" 
+      stroke="currentColor" 
+      strokeWidth="2.5" 
+      strokeLinecap="round" 
+      strokeLinejoin="round"
+      style={{ verticalAlign: '-0.1em' }}
+    >
+      <circle cx="18" cy="5" r="3"/>
+      <circle cx="6" cy="12" r="3"/>
+      <circle cx="18" cy="19" r="3"/>
+      <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/>
+      <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+    </svg>
+  </span>
+);
+
 function App() {
-  const [gameState, setGameState] = useState('START'); // START, PLAYING, GAMEOVER
+  const [gameState, setGameState] = useState('START'); // START, PLAYING, GAMEOVER, TUTORIAL, COUNTDOWN
   const [gameMode, setGameMode] = useState('EASY');
   const [score, setScore] = useState(0);
+  const scoreRef = useRef(0);
   const [highScores, setHighScores] = useState(() => {
     const easy = Number(localStorage.getItem('beaver-high-score-easy')) || Number(localStorage.getItem('beaver-high-score')) || 0;
     const hard = Number(localStorage.getItem('beaver-high-score-hard')) || 0;
@@ -64,6 +106,7 @@ function App() {
   });
   const [timeLeft, setTimeLeft] = useState(MODE_CONFIG.EASY.duration);
   const [pressure, setPressure] = useState(0);
+  const pressureRef = useRef(0);
   const [holes, setHoles] = useState([]);
   const [selectedMaterial, setSelectedMaterial] = useState(null);
   const [showHoleHint, setShowHoleHint] = useState(false);
@@ -93,28 +136,12 @@ function App() {
   const holeHintDelayTimerRef = useRef(null);
   const holeHintHideTimerRef = useRef(null);
 
-  // Sync refs with state for use in intervals without re-triggering them
-  const finishIngameTutorial = () => {
-    localStorage.setItem('beaverIngameGuideSeen', 'true');
-    setShowInGameTutorial(false);
-
-    if (gameState === 'TUTORIAL') {
-      setCountdown(3);
-      setGameState('COUNTDOWN');
-    }
-  };
-
-  useEffect(() => {
-    holesRef.current = holes;
-  }, [holes]);
-
-  useEffect(() => {
-    timeLeftRef.current = timeLeft;
-  }, [timeLeft]);
-
-  useEffect(() => {
-    gameModeRef.current = gameMode;
-  }, [gameMode]);
+  // Sync refs with state
+  useEffect(() => { scoreRef.current = score; }, [score]);
+  useEffect(() => { pressureRef.current = pressure; }, [pressure]);
+  useEffect(() => { holesRef.current = holes; }, [holes]);
+  useEffect(() => { timeLeftRef.current = timeLeft; }, [timeLeft]);
+  useEffect(() => { gameModeRef.current = gameMode; }, [gameMode]);
 
   const spawnHole = useCallback(() => {
     if (isPaused || gameState !== 'PLAYING') return;
@@ -188,15 +215,27 @@ function App() {
     }
   }, [gameState, countdown, spawnHole]);
 
+  const finishIngameTutorial = () => {
+    localStorage.setItem('beaverIngameGuideSeen', 'true');
+    setShowInGameTutorial(false);
+
+    if (gameState === 'TUTORIAL') {
+      setCountdown(3);
+      setGameState('COUNTDOWN');
+    }
+  };
+
   const endGame = useCallback(() => {
     const currentMode = gameModeRef.current;
     const config = MODE_CONFIG[currentMode];
-    const highScore = highScores[currentMode];
-    const newRecord = score > highScore;
+    const currentScore = scoreRef.current;
+    const currentPressure = pressureRef.current;
+    const highScore = highScores[currentMode] || 0;
+    const newRecord = currentScore > highScore;
     const survivalTime = config.duration - timeLeftRef.current;
 
     let earnedStars = 0;
-    if (pressure < MAX_PRESSURE || survivalTime >= config.starThresholds[2]) earnedStars = 3;
+    if (currentPressure < MAX_PRESSURE || survivalTime >= config.starThresholds[2]) earnedStars = 3;
     else if (survivalTime >= config.starThresholds[1]) earnedStars = 2;
     else if (survivalTime >= config.starThresholds[0]) earnedStars = 1;
 
@@ -205,35 +244,33 @@ function App() {
       setDisplayedScore(0);
       setStars(earnedStars);
       if (newRecord) setIsNewRecord(true);
-    }, 1500);
+    }, 1000);
 
     if (newRecord) {
       setHighScores(prev => {
-        const updated = { ...prev, [currentMode]: score };
-        localStorage.setItem(`beaver-high-score-${currentMode.toLowerCase()}`, score.toString());
-        // For legacy compatibility, also update 'beaver-high-score' if it was Easy mode
-        if (currentMode === 'EASY') localStorage.setItem('beaver-high-score', score.toString());
+        const updated = { ...prev, [currentMode]: currentScore };
+        localStorage.setItem(`beaver-high-score-${currentMode.toLowerCase()}`, currentScore.toString());
+        if (currentMode === 'EASY') localStorage.setItem('beaver-high-score', currentScore.toString());
         return updated;
       });
     }
 
-    // Update all-time best
-    if (score > bestScore) {
-      setBestScore(score);
+    if (currentScore > (bestScore || 0)) {
+      setBestScore(currentScore);
       setBestScoreMode(currentMode);
-      localStorage.setItem('beaver-best-score', score.toString());
+      localStorage.setItem('beaver-best-score', currentScore.toString());
       localStorage.setItem('beaver-best-score-mode', currentMode);
     }
-  }, [score, highScores, pressure, bestScore]);
+  }, [highScores, bestScore]);
 
   // Score count-up effect
   useEffect(() => {
     if (gameState === 'GAMEOVER' && displayedScore < score) {
       const timer = setTimeout(() => {
         const diff = score - displayedScore;
-        const step = Math.max(1, Math.floor(diff / 10));
+        const step = Math.max(1, Math.floor(diff / 5)); // Slightly faster count-up
         setDisplayedScore((prev) => Math.min(score, prev + step));
-      }, 30);
+      }, 20);
       return () => clearTimeout(timer);
     }
   }, [gameState, score, displayedScore]);
@@ -248,7 +285,6 @@ function App() {
         // Time update
         setTimeLeft((prev) => {
           const next = prev - 1;
-          const elapsed = duration - next;
 
           // Speed up toast: halfway through the last stage
           // For Easy(30s): elapsed is 20 (next is 10)
@@ -431,6 +467,40 @@ function App() {
   const closeHelp = () => {
     setIsPaused(false);
     setShowHelpModal(false);
+  };
+
+  const handleShareGame = () => {
+    const url = window.location.origin;
+    if (navigator.share) {
+      navigator.share({
+        title: 'Beaver Dam Panic',
+        text: '귀여운 비버와 함께 댐을 지키는 모바일 미니게임! 지금 도전해보세요!',
+        url: url,
+      }).catch(() => {});
+    } else {
+      navigator.clipboard.writeText(url).then(() => {
+        alert('게임 링크가 복사되었습니다!');
+      });
+    }
+  };
+
+  const handleShareScore = () => {
+    const text = `Beaver Dam Panic에서 ${score}점을 기록했어요! 🦫\n당신도 비버를 도와 댐을 지켜주세요!`;
+    if (navigator.share) {
+      navigator.share({
+        title: '내 최고 기록 공유',
+        text: text,
+        url: window.location.origin,
+      }).catch(() => {});
+    } else {
+      navigator.clipboard.writeText(text).then(() => {
+        alert('점수 기록이 복사되었습니다!');
+      });
+    }
+  };
+
+  const handleGoHome = () => {
+    setGameState('START');
   };
 
   return (
@@ -745,7 +815,7 @@ function App() {
         </div>
       )}
                   {gameState === 'GAMEOVER' && (
-                  <div className={`screen result-screen ${pressure >= MAX_PRESSURE ? 'burst' : 'safe'}`}>
+                  <div className={`screen result-screen ${pressure >= MAX_PRESSURE ? 'burst' : 'safe'}`} style={{ display: 'flex', zIndex: 1000 }}>
                   <div className="bg-clouds">
                   <div className="cloud cloud-1"><Emoji symbol="☁️" /></div>
                   <div className="cloud cloud-2"><Emoji symbol="☁️" /></div>
@@ -761,14 +831,14 @@ function App() {
                   <p className="result-feedback">
                   {pressure >= MAX_PRESSURE
                   ? "댐이 무너졌어요! 구멍 크기에 맞는 재료를 더 빠르게 골라보세요."
-                  : MODE_CONFIG[gameMode].successMessage}
+                  : (MODE_CONFIG[gameMode]?.successMessage || "댐을 성공적으로 지켜냈어요!")}
                   </p>
 
                   <div className="star-rating">
                   {[1, 2, 3].map((s) => (
                   <span
                   key={s}
-                  className={`star ${s <= stars ? 'active' : ''}`}
+                  className={`star ${s <= (stars || 0) ? 'active' : ''}`}
                   style={{ animationDelay: `${0.2 + s * 0.1}s` }}
                   >
                   <Emoji symbol="⭐" />
@@ -779,9 +849,27 @@ function App() {
                   <div className="result-stats">
                   <p className="final-score-label">Final Score</p>
                   <p className="final-score">{displayedScore}</p>
-                  <p className="high-score">Best Score: {isNewRecord ? score : highScores[gameMode]}</p>
+                  <p className="high-score">Best Score: {isNewRecord ? score : (highScores[gameMode] || 0)}</p>
                   </div>
-            <div className="star-criteria">{MODE_CONFIG[gameMode].criteriaText}</div>
+            <div className="star-criteria">{MODE_CONFIG[gameMode]?.criteriaText || ""}</div>
+
+            <div className="share-actions">
+              <div className="share-label-group">
+                <span className="share-icon"><Share2Icon /></span>
+                <span className="share-label">공유하기</span>
+              </div>
+              <div className="share-btns">
+                <button className="share-pill-btn" onClick={handleShareGame}>
+                  <Emoji symbol="🔗" /> 게임
+                </button>
+                <button className="share-pill-btn" onClick={handleShareScore}>
+                  <Emoji symbol="🏆" /> 점수
+                </button>
+                <button className="share-pill-btn" onClick={handleGoHome}>
+                  <Emoji symbol="🏠" /> 홈
+                </button>
+              </div>
+            </div>
 
             <button className="result-restart-btn" onClick={startGame}>다시 하기</button>
           </div>
