@@ -1347,3 +1347,24 @@ body,
   overflow: hidden;
 }
 
+
+
+.tutorial-start-pill {
+  margin-top: 8px;
+  justify-content: center;
+  cursor: pointer;
+  user-select: none;
+}
+
+.ingame-tutorial-start-btn {
+  margin-top: 8px;
+  width: 100%;
+  box-sizing: border-box;
+  border: none;
+  border-radius: 999px;
+  padding: 8px 12px;
+  font: inherit;
+  font-weight: 800;
+  cursor: pointer;
+  text-align: center;
+}

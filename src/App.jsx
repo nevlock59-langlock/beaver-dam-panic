@@ -93,6 +93,12 @@ function App() {
   const holeHintHideTimerRef = useRef(null);
 
   // Sync refs with state for use in intervals without re-triggering them
+  const finishIngameTutorial = () => {
+    localStorage.setItem('beaverIngameGuideSeen', 'true');
+    setShowInGameTutorial(false);
+    setGameState('COUNTDOWN');
+  };
+
   useEffect(() => {
     holesRef.current = holes;
   }, [holes]);
@@ -157,11 +163,15 @@ function App() {
 
   useEffect(() => {
     if (gameState === 'TUTORIAL') {
+      const hasSeenGuide = localStorage.getItem('beaverIngameGuideSeen') === 'true';
+
+      if (!hasSeenGuide) return;
+
       const timer = setTimeout(() => {
-        setGameState('PLAYING');
         setShowInGameTutorial(false);
-        spawnHole();
+        setGameState('COUNTDOWN');
       }, 2000);
+
       return () => clearTimeout(timer);
     }
   }, [gameState, spawnHole]);
@@ -656,6 +666,12 @@ function App() {
                     <div className="tutorial-pill"><Emoji symbol="🪵" /> <span className="legend-arrow">→</span> <Emoji symbol="🌊" /></div>
                     <div className="tutorial-pill"><Emoji symbol="🪨" /> <span className="legend-arrow">→</span> <Emoji symbol="🌋" /></div>
                   </div>
+              <button
+                className="ingame-tutorial-start-btn"
+                onClick={finishIngameTutorial}
+              >
+                알겠어! 시작하기
+              </button>
                 </div>
               </div>
             )}
