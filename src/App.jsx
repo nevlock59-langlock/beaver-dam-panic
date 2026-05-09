@@ -96,7 +96,11 @@ function App() {
   const finishIngameTutorial = () => {
     localStorage.setItem('beaverIngameGuideSeen', 'true');
     setShowInGameTutorial(false);
-    setGameState('COUNTDOWN');
+
+    if (gameState === 'TUTORIAL') {
+      setCountdown(3);
+      setGameState('COUNTDOWN');
+    }
   };
 
   useEffect(() => {
@@ -163,16 +167,7 @@ function App() {
 
   useEffect(() => {
     if (gameState === 'TUTORIAL') {
-      const hasSeenGuide = localStorage.getItem('beaverIngameGuideSeen') === 'true';
-
-      if (!hasSeenGuide) return;
-
-      const timer = setTimeout(() => {
-        setShowInGameTutorial(false);
-        setGameState('COUNTDOWN');
-      }, 2000);
-
-      return () => clearTimeout(timer);
+      return;
     }
   }, [gameState, spawnHole]);
 
@@ -182,16 +177,12 @@ function App() {
         const timer = setTimeout(() => setCountdown(countdown - 1), 1000);
         return () => clearTimeout(timer);
       } else if (countdown === 0) {
-        const timer = setTimeout(() => {
-          setGameState('PLAYING');
-          setCountdown(null);
-          spawnHole();
-          setShowInGameTutorial(true);
-          setTimeout(() => {
-            setShowInGameTutorial(false);
-          }, 2000);
-        }, 400); // 0.3~0.5초 사이 첫 구멍 생성
-        return () => clearTimeout(timer);
+      const timer = setTimeout(() => {
+        setGameState('PLAYING');
+        setCountdown(null);
+        spawnHole();
+      }, 400); // 0.3~0.5초 사이 첫 구멍 생성
+      return () => clearTimeout(timer);
       }
     }
   }, [gameState, countdown, spawnHole]);
@@ -667,10 +658,10 @@ function App() {
                     <div className="tutorial-pill"><Emoji symbol="🪨" /> <span className="legend-arrow">→</span> <Emoji symbol="🌋" /></div>
                   </div>
               <button
-                className="ingame-tutorial-start-btn"
+                className="start-button ingame-tutorial-repair-btn"
                 onClick={finishIngameTutorial}
               >
-                알겠어! 시작하기
+                시작하기
               </button>
                 </div>
               </div>
@@ -684,7 +675,7 @@ function App() {
                     <div className="tutorial-pill"><Emoji symbol="🪵" /> <span className="legend-arrow">→</span> <Emoji symbol="🌊" /></div>
                     <div className="tutorial-pill"><Emoji symbol="🪨" /> <span className="legend-arrow">→</span> <Emoji symbol="🌋" /></div>
                   </div>
-                  <button className="btn-resume" style={{ marginTop: '20px' }} onClick={closeHelp}>계속하기</button>
+                  <button className="start-button ingame-tutorial-repair-btn" style={{ marginTop: '20px' }} onClick={closeHelp}>계속하기</button>
                 </div>
               </div>
             )}

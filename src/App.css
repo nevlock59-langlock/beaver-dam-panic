@@ -1093,7 +1093,7 @@ body {
   background: rgba(0,0,0,0.4);
   backdrop-filter: blur(2px);
   pointer-events: all;
-  animation: fadeInOut 2s forwards;
+  animation: none;
 }
 
 .ingame-tutorial-card {
@@ -1367,4 +1367,98 @@ body,
   font-weight: 800;
   cursor: pointer;
   text-align: center;
+}
+
+.ingame-tutorial-start-btn {
+  appearance: none;
+  -webkit-appearance: none;
+  margin-top: 8px;
+  width: 100%;
+  justify-content: center;
+  font: inherit;
+  font-weight: 800;
+  cursor: pointer;
+  color: inherit;
+}
+
+button.ingame-tutorial-start-btn,
+button.tutorial-pill.ingame-tutorial-start-btn {
+  appearance: none !important;
+  -webkit-appearance: none !important;
+  background: rgba(255, 255, 255, 0.18) !important;
+  border: 1px solid rgba(255, 255, 255, 0.35) !important;
+  color: inherit !important;
+  box-shadow: none !important;
+
+  margin-top: 8px;
+  width: 100%;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 8px 12px;
+  border-radius: 999px;
+  font: inherit;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+/* FINAL: ingame tutorial start button style */
+button.ingame-tutorial-start-btn,
+button.tutorial-pill.ingame-tutorial-start-btn {
+  background: rgba(76, 48, 28, 0.88) !important;
+  color: #fff7e6 !important;
+  border: 1px solid rgba(255, 247, 230, 0.45) !important;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.18) !important;
+
+  margin-top: 8px !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+
+  padding: 8px 12px !important;
+  border-radius: 999px !important;
+  font: inherit !important;
+  font-weight: 800 !important;
+  cursor: pointer !important;
+  appearance: none !important;
+  -webkit-appearance: none !important;
+}
+
+/* FINAL ORANGE: ingame tutorial start button */
+button.ingame-tutorial-start-btn,
+button.tutorial-pill.ingame-tutorial-start-btn {
+  background: linear-gradient(135deg, #ffb347, #ff8c42) !important;
+  color: #3b2208 !important;
+  border: 1px solid rgba(255, 216, 150, 0.95) !important;
+  box-shadow: 0 3px 8px rgba(120, 70, 20, 0.25) !important;
+
+  margin-top: 8px !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+
+  padding: 8px 12px !important;
+  border-radius: 999px !important;
+  font: inherit !important;
+  font-weight: 800 !important;
+  cursor: pointer !important;
+  appearance: none !important;
+  -webkit-appearance: none !important;
+}
+
+.ingame-tutorial-repair-btn {
+  margin-top: 10px !important;
+  width: 100% !important;
+}
+
+.ingame-tutorial-repair-btn {
+  margin-top: 14px !important;
+  width: min(240px, 80%) !important;
+  align-self: center !important;
 }
