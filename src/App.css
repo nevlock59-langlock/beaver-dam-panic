@@ -1462,3 +1462,21 @@ button.tutorial-pill.ingame-tutorial-start-btn {
   width: min(240px, 80%) !important;
   align-self: center !important;
 }
+
+/* Beaver Dam Panic: safe water pressure feel */
+.water-overlay {
+  animation: waterPressureSafe 1.2s infinite ease-in-out;
+}
+
+@keyframes waterPressureSafe {
+  0% {
+    opacity: 0.82;
+  }
+  50% {
+    opacity: 0.95;
+  }
+  100% {
+    opacity: 0.82;
+  }
+}
+

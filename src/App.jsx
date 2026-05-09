@@ -5,6 +5,7 @@ import './App.css';
 
 const MAX_PRESSURE = 100;
 
+
 const MODE_CONFIG = {
   EASY: {
     duration: 30,
