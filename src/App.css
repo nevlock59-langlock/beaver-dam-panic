@@ -1342,50 +1342,9 @@ body {
   color: var(--accent-orange);
 }
 
-/* Beaver Dam Panic: make holes visible in dark mode */
-.hole {
-  background: #020617 !important;
-  border: 3px solid #fde047 !important;
-  box-shadow:
-    0 0 0 2px rgba(255,255,255,0.55),
-    0 0 14px rgba(253,224,71,0.75) !important;
-}
-
-/* Beaver Dam Panic: subtle visible holes for dark mode */
-.hole {
-  background: #020617 !important;
-  border: 2px solid #facc15 !important;
-  box-shadow:
-    0 0 0 1px rgba(255,255,255,0.35),
-    0 0 8px rgba(250,204,21,0.45) !important;
-}
-
-/* Beaver Dam Panic: subtle dark-mode hole visibility */
-.hole {
-  background: #020617 !important;
-  border: 1px solid #facc15 !important;
-  box-shadow:
-    0 0 0 1px rgba(255,255,255,0.28),
-    0 0 7px rgba(250,204,21,0.38) !important;
-}
-
-/* Beaver Dam Panic: show holes only in dark mode */
+/* Beaver Dam Panic: dark-mode hole visibility */
 @media (prefers-color-scheme: dark) {
   .hole {
-    background: #020617 !important;
-    border: 1px solid #facc15 !important;
-    box-shadow:
-      0 0 0 1px rgba(255,255,255,0.28),
-      0 0 7px rgba(250,204,21,0.38) !important;
-  }
-}
-
-/* Beaver Dam Panic: dark-mode visibility for all hole-like objects */
-@media (prefers-color-scheme: dark) {
-  [class*="hole" i],
-  [class*="leak" i],
-  [class*="crack" i],
-  [class*="damage" i] {
     background: #020617 !important;
     border: 1px solid #facc15 !important;
     box-shadow:
