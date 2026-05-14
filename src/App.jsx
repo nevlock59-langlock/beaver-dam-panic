@@ -170,7 +170,21 @@ function App() {
     });
   }, [isPaused, gameState]);
 
-  const startGame = () => {
+  
+const handleStartClick = () => {
+  const seen = localStorage.getItem('tutorialSeen');
+
+  if (!seen) {
+    setShowTutorial(true);
+    localStorage.setItem('tutorialSeen', 'true');
+    return;
+  }
+
+  startGame();
+};
+
+
+const startGame = () => {
     const config = MODE_CONFIG[gameMode];
     setScore(0);
     setTimeLeft(config.duration);
@@ -456,7 +470,6 @@ function App() {
       setBeaverAction('panic');
       setTimeout(() => setBeaverAction('idle'), 500);
     }
-    setSelectedMaterial(null);
   };
 
   const openHelp = () => {
@@ -605,7 +618,7 @@ function App() {
               </button>
             </div>
 
-            <button className="start-button" onClick={startGame}>수리 시작!</button>
+            <button className="start-button" onClick={handleStartClick}>수리 시작!</button>
           </div>
           <div className="made-by-credit">made in 함수철의 데모공장</div>
 
@@ -639,7 +652,10 @@ function App() {
                     </div>
                   </div>
                 </div>
-                <button className="tutorial-start-btn" onClick={() => setShowTutorial(false)}>
+                <button className="tutorial-start-btn" onClick={() => {
+                    setShowTutorial(false);
+                    startGame();
+                  }}>
                   알겠어요!
                 </button>
               </div>
@@ -871,7 +887,7 @@ function App() {
               </div>
             </div>
 
-            <button className="result-restart-btn" onClick={startGame}>다시 하기</button>
+            <button className="result-restart-btn" onClick={handleStartClick}>다시 하기</button>
           </div>
         </div>
       )}
