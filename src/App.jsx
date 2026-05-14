@@ -738,7 +738,7 @@ const startGame = () => {
             {showInGameTutorial && (
               <div className="ingame-tutorial-overlay">
                 <div className="ingame-tutorial-card">
-                  <p className="ingame-tutorial-text">재료 고르고 누수 막기!</p>
+                  <p className="ingame-tutorial-text">누수 크기 확인 → 재료 선택 → 누수 탭!</p>
                   <div className="ingame-tutorial-rules">
                     <div className="tutorial-pill"><Emoji symbol="🍃" /> <span className="legend-arrow">→</span> <Emoji symbol="💧" /></div>
                     <div className="tutorial-pill"><Emoji symbol="🪵" /> <span className="legend-arrow">→</span> <Emoji symbol="💦" /></div>
@@ -756,7 +756,7 @@ const startGame = () => {
             {showHelpModal && (
               <div className="tutorial-overlay">
                 <div className="ingame-tutorial-card">
-                  <p className="ingame-tutorial-text">재료 고르고 누수 막기!</p>
+                  <p className="ingame-tutorial-text">누수 크기 확인 → 재료 선택 → 누수 탭!</p>
                   <div className="ingame-tutorial-rules">
                     <div className="tutorial-pill"><Emoji symbol="🍃" /> <span className="legend-arrow">→</span> <Emoji symbol="💧" /></div>
                     <div className="tutorial-pill"><Emoji symbol="🪵" /> <span className="legend-arrow">→</span> <Emoji symbol="💦" /></div>
@@ -783,7 +783,7 @@ const startGame = () => {
             </div>
             <div
               className="water-overlay"
-              style={{ height: `${12 + pressure * 0.7}%` }}
+              style={{ height: `${pressure}%` }}
             >
             </div>
             {holes.map((hole) => (
