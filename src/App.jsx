@@ -25,14 +25,14 @@ const MODE_CONFIG = {
 
 const HOLE_TYPES = [
   { id: 'small', emoji: '💧', label: 'Small', repair: 'leaf', score: 10, pressureInc: 5 },
-  { id: 'medium', emoji: '🌊', label: 'Medium', repair: 'wood', score: 20, pressureInc: 8 },
-  { id: 'large', emoji: '🌋', label: 'Large', repair: 'stone', score: 50, pressureInc: 15 },
+  { id: 'medium', emoji: '💦', label: 'Medium', repair: 'wood', score: 20, pressureInc: 8 },
+  { id: 'large', emoji: '🌊', label: 'Large', repair: 'stone', score: 50, pressureInc: 15 },
 ];
 
 const MATERIALS = [
-  { id: 'leaf', emoji: '🍃', label: 'Leaf' },
-  { id: 'wood', emoji: '🪵', label: 'Wood' },
-  { id: 'stone', emoji: '🪨', label: 'Stone' },
+  { id: 'leaf', emoji: '🍃', label: '이파리' },
+  { id: 'wood', emoji: '🪵', label: '나무' },
+  { id: 'stone', emoji: '🪨', label: '돌' },
 ];
 
 const Emoji = ({ symbol, className = "" }) => {
@@ -563,7 +563,7 @@ const startGame = () => {
               <div className="step">
                 <span className="step-num">1</span>
                 <span className="step-icon"><Emoji symbol="🪵" /></span>
-                <span className="step-text">재료 선택</span>
+                <span className="step-text">누수 재료 선택</span>
               </div>
               <div className="step-arrow"><Emoji symbol="➜" /></div>
               <div className="step">
@@ -585,14 +585,14 @@ const startGame = () => {
                 <span className="legend-text">
                   <Emoji symbol="🪵" />
                   <span className="legend-arrow">→</span>
-                  <Emoji symbol="🌊" />
+                  <Emoji symbol="💦" />
                 </span>
               </div>
               <div className="start-pill">
                 <span className="legend-text">
                   <Emoji symbol="🪨" />
                   <span className="legend-arrow">→</span>
-                  <Emoji symbol="🌋" />
+                  <Emoji symbol="🌊" />
                 </span>
               </div>
             </div>
@@ -634,11 +634,11 @@ const startGame = () => {
                     <div className="tutorial-icon"><Emoji symbol="🛠️" /></div>
                     <div className="tutorial-text">
                       <strong>재료를 골라 댐의 틈을 막으세요</strong>
-                      <p>구멍 크기에 맞는 재료(잎, 나무, 돌)를 선택해 클릭하세요.</p>
+                      <p>새는 물의 크기에 맞는 재료(잎, 나무, 돌)를 골라 누수를 막으세요.</p>
                     </div>
                   </div>
                   <div className="tutorial-item">
-                    <div className="tutorial-icon"><Emoji symbol="🌊" /></div>
+                    <div className="tutorial-icon"><Emoji symbol="💦" /></div>
                     <div className="tutorial-text">
                       <strong>시간이 지날수록 물살이 강해져요</strong>
                       <p>수압이 100%가 되면 댐이 무너지니 주의하세요!</p>
@@ -738,11 +738,11 @@ const startGame = () => {
             {showInGameTutorial && (
               <div className="ingame-tutorial-overlay">
                 <div className="ingame-tutorial-card">
-                  <p className="ingame-tutorial-text">맞는 재료 선택 → 구멍 탭!</p>
+                  <p className="ingame-tutorial-text">누수 크기 확인 → 재료 선택 → 누수 탭!</p>
                   <div className="ingame-tutorial-rules">
                     <div className="tutorial-pill"><Emoji symbol="🍃" /> <span className="legend-arrow">→</span> <Emoji symbol="💧" /></div>
-                    <div className="tutorial-pill"><Emoji symbol="🪵" /> <span className="legend-arrow">→</span> <Emoji symbol="🌊" /></div>
-                    <div className="tutorial-pill"><Emoji symbol="🪨" /> <span className="legend-arrow">→</span> <Emoji symbol="🌋" /></div>
+                    <div className="tutorial-pill"><Emoji symbol="🪵" /> <span className="legend-arrow">→</span> <Emoji symbol="💦" /></div>
+                    <div className="tutorial-pill"><Emoji symbol="🪨" /> <span className="legend-arrow">→</span> <Emoji symbol="🌊" /></div>
                   </div>
               <button
                 className="start-button ingame-tutorial-repair-btn"
@@ -756,11 +756,11 @@ const startGame = () => {
             {showHelpModal && (
               <div className="tutorial-overlay">
                 <div className="ingame-tutorial-card">
-                  <p className="ingame-tutorial-text">맞는 재료 선택 → 구멍 탭!</p>
+                  <p className="ingame-tutorial-text">누수 크기 확인 → 재료 선택 → 누수 탭!</p>
                   <div className="ingame-tutorial-rules">
                     <div className="tutorial-pill"><Emoji symbol="🍃" /> <span className="legend-arrow">→</span> <Emoji symbol="💧" /></div>
-                    <div className="tutorial-pill"><Emoji symbol="🪵" /> <span className="legend-arrow">→</span> <Emoji symbol="🌊" /></div>
-                    <div className="tutorial-pill"><Emoji symbol="🪨" /> <span className="legend-arrow">→</span> <Emoji symbol="🌋" /></div>
+                    <div className="tutorial-pill"><Emoji symbol="🪵" /> <span className="legend-arrow">→</span> <Emoji symbol="💦" /></div>
+                    <div className="tutorial-pill"><Emoji symbol="🪨" /> <span className="legend-arrow">→</span> <Emoji symbol="🌊" /></div>
                   </div>
                   <button className="start-button ingame-tutorial-repair-btn" style={{ marginTop: '20px' }} onClick={closeHelp}>계속하기</button>
                 </div>
@@ -799,8 +799,16 @@ const startGame = () => {
                 style={{ left: `${hole.x}%`, top: `${hole.y}%` }}
                 onClick={() => handleHoleClick(hole)}
               >
+                <div className="hole-material-hint">
+
+                  <Emoji symbol={MATERIALS.find(m => m.id === HOLE_TYPES.find(t => t.id === hole.type)?.repair)?.emoji} />
+
+                </div>
+
                 <div className="hole-inner">
+
                   <Emoji symbol={HOLE_TYPES.find(t => t.id === hole.type).emoji} />
+
                 </div>
               </button>
             ))}
@@ -846,7 +854,7 @@ const startGame = () => {
 
                   <p className="result-feedback">
                   {pressure >= MAX_PRESSURE
-                  ? "댐이 무너졌어요! 구멍 크기에 맞는 재료를 더 빠르게 골라보세요."
+                  ? "댐이 무너졌어요! 새는 물의 크기에 맞는 재료를 더 빠르게 골라보세요."
                   : (MODE_CONFIG[gameMode]?.successMessage || "댐을 성공적으로 지켜냈어요!")}
                   </p>
 
